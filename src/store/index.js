@@ -15,6 +15,7 @@ import DrivingLicenseStore from "./modules/driving-license.store";
 import CityStore from "./modules/city.store";
 import RegionStore from "./modules/region.store";
 import EducationDegreeStore from "./modules/educationDegree.store";
+import UniversityStore from "./modules/university.store";
 
 export default new Vuex.Store({
     modules: {
@@ -29,6 +30,7 @@ export default new Vuex.Store({
         DrivingLicenseStore,
         CityStore,
         RegionStore,
-        EducationDegreeStore
+        EducationDegreeStore,
+        UniversityStore
     }
 });

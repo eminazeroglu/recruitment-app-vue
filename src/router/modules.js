@@ -60,6 +60,15 @@ export const routers = [
                 sidebar: true,
                 component: () => import('../views/interrogator/education-degree/EducationDegreeIndex'),
             },
+            {
+                path: '/university',
+                name: 'university',
+                title: 'crm.Sidebar.Universities',
+                icon: 'icon-circle-o',
+                permission: 'university.read',
+                sidebar: true,
+                component: () => import('../views/interrogator/university/UniversityIndex'),
+            },
         ]
     },
     {
