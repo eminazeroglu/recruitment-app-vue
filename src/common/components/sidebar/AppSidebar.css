@@ -1,0 +1,81 @@
+.sidebar {
+    @apply flex flex-col bg-gray-700 w-56 h-full
+}
+.sidebar .ps {
+    @apply h-full
+}
+.ps__rail-y {
+    @apply bg-gray-900 w-2
+}
+.ps__thumb-y {
+    @apply bg-gray-400
+}
+.ps .ps__rail-x:hover, .ps .ps__rail-y:hover, .ps .ps__rail-x:focus, .ps .ps__rail-y:focus, .ps .ps__rail-x.ps--clicking, .ps .ps__rail-y.ps--clicking {
+    @apply bg-transparent
+}
+.ps__rail-y:hover > .ps__thumb-y, .ps__rail-y:focus > .ps__thumb-y, .ps__rail-y.ps--clicking .ps__thumb-y {
+    @apply w-1.5
+}
+.ps__rail-y:hover > .ps__thumb-y, .ps__rail-y:focus > .ps__thumb-y, .ps__rail-y.ps--clicking .ps__thumb-y {
+    @apply bg-gray-400
+}
+
+.sidebar-navbar {
+    @apply flex flex-col w-full list-none
+}
+
+.sidebar-navbar li {
+    @apply border-b border-gray-600 relative
+}
+
+.sidebar-navbar li a {
+    @apply w-full inline-flex pr-4 pl-8 h-12 justify-between items-center text-white text-sm font-normal select-none
+}
+
+.sidebar-navbar li a .inner {
+    @apply flex items-center
+}
+
+.sidebar-navbar li a .inner .icon {
+    @apply w-4 inline-flex justify-center mr-2 text-sm relative -top-0.5
+}
+
+.sidebar-navbar li a .inner .text {
+    @apply w-full line-clamp-2 overflow-hidden leading-normal py-0.5
+}
+
+.sidebar-navbar li a .arrow {
+    @apply text-white
+}
+
+.sidebar-navbar li a:hover {
+    @apply bg-gray-600
+}
+
+.sidebar-navbar li a.active {
+    @apply bg-gray-900
+}
+
+.sidebar-navbar li:hover ul {
+    @apply opacity-100 visible ml-0
+}
+
+.sidebar-navbar li ul {
+    @apply bg-gray-800 h-0 overflow-hidden transition-all
+}
+
+.sidebar-navbar li ul.open {
+    @apply h-auto
+}
+
+.sidebar-navbar li ul li {
+    @apply bg-gray-800 border-gray-700
+}
+
+.sidebar-navbar li ul li:first-child {
+    border-top: 1px solid #253141;
+}
+
+.sidebar-navbar li ul li:last-child {
+    border-bottom: none;
+}

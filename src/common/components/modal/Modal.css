@@ -1,0 +1,39 @@
+.modal {
+    @apply fixed inset-0 bg-gray-900 bg-opacity-80 flex items-center justify-center py-4 opacity-0 invisible z-50 transition-all scale-50 duration-200 dark:bg-gray-800 dark:bg-opacity-90
+}
+.modal-open {
+    @apply opacity-100 visible scale-100
+}
+.modal-box {
+    @apply bg-white rounded shadow-2xl mx-4 lg:mx-0 max-h-full overflow-hidden flex flex-col dark:bg-gray-900
+}
+.modal-box--xs {
+    @apply lg:w-300px
+}
+.modal-box--sm {
+    @apply lg:w-640px
+}
+.modal-box--md {
+    @apply lg:w-768px
+}
+.modal-box--lg {
+    @apply lg:w-1024px
+}
+.modal-box--xl {
+    @apply lg:w-1280px
+}
+.modal-box--2xl {
+    @apply lg:w-1536px
+}
+.modal-header {
+    @apply grid grid-cols-12 min-h-12 border-b border-gray-300 bg-gray-600 text-white dark:border-gray-800 flex-shrink-0 py-2
+}
+.modal-close {
+    @apply text-xs h-full px-4 col-span-2 text-right
+}
+.modal-title {
+    @apply text-lg inline-flex items-center px-4 col-span-10
+}
+.modal-body {
+    @apply p-4 calc-h-full-12 overflow-auto
+}

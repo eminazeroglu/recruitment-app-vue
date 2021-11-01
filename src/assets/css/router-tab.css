@@ -1,0 +1,41 @@
+.router-tab {
+    @apply min-h-full
+}
+
+.router-tab__header {
+    @apply bg-gray-200 pt-1 h-auto fixed w-full top-14
+}
+
+.router-tab__item-title {
+    @apply font-normal text-sm
+}
+
+.router-tab__scroll {
+    @apply h-auto
+}
+
+.router-tab__scroll-container {
+    @apply px-5 pt-2
+}
+
+.router-tab__item {
+    @apply bg-gray-100 rounded-tr rounded-tl border-0 h-9 flex items-center text-gray-400
+}
+.router-tab__item:hover {
+    @apply border-0 text-gray-800;
+}
+.router-tab__item.is-active {
+    @apply bg-white text-gray-800
+}
+
+.router-tab__nav {
+    @apply space-x-1
+}
+
+.router-tab:not(:last-child) {
+    @apply mr-1;
+}
+
+.router-tab__container {
+    @apply -calc-h-full-20 p-8 overflow-y-auto block w-full
+}

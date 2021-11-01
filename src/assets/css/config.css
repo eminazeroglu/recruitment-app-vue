@@ -1,0 +1,14 @@
+html {
+    font-family: 'Roboto', sans-serif;
+}
+html, body, #app {
+    @apply h-full
+}
+
+body {
+    @apply overflow-hidden text-sm
+}
+
+a {
+    @apply cursor-pointer
+}
