@@ -61,13 +61,6 @@
                             <form-text v-model="form.translates[lang.code].name"/>
                         </form-group>
 
-                        <form-group
-                            :label="translate(translateKey + '.Label.Profession')"
-                            name="profession_id"
-                        >
-                            <form-tree-select :options="professions" v-model="form.profession_id"/>
-                        </form-group>
-
                         <app-button class="justify-center" property="success" type="submit">
                             {{ translate('button.Save') }}
                         </app-button>
@@ -100,33 +93,24 @@ export default {
                     dataField: 'name',
                     show: true
                 },
-                {
-                    caption: translateKey + '.Label.Profession',
-                    dataField: 'profession.name',
-                    show: true,
-                    width: 300
-                },
             ],
             form: {}
         }
     },
     computed: {
         ...mapState('SkillStore', ['skills']),
-        ...mapState('ProfessionStore', ['professions']),
         permission() {
             return this.currentPage.permission;
         }
     },
     methods: {
         ...mapActions('SkillStore', ['getSkills', 'setSkill', 'actionSkill', 'deleteSkill']),
-        ...mapActions('ProfessionStore', ['getSelectProfessions']),
         /*
          * Form Create
          * */
         formCreate(item = {}) {
             const form = {
                 id: item.id || null,
-                profession_id: item.profession_id || null,
                 translates: {}
             }
             this.appLanguages.filter(i => {
@@ -144,7 +128,6 @@ export default {
             this.modal(this.modalId)
             this.modelShow = false;
             this.resetError();
-            this.getSelectProfessions();
             this.formCreate(item);
         },
         /*
