@@ -22,6 +22,7 @@ import VacancyPublishStatusStore from "./modules/vacancy-publish-status.store";
 import DepartmentStore from "./modules/department.store";
 import VacancyStatusStore from "./modules/vacancy-status.store";
 import CandidateLevelStore from "./modules/candidate-level.store";
+import ApplyStatusStore from "./modules/apply-status.store";
 
 export default new Vuex.Store({
     modules: {
@@ -43,6 +44,7 @@ export default new Vuex.Store({
         VacancyPublishStatusStore,
         DepartmentStore,
         VacancyStatusStore,
-        CandidateLevelStore
+        CandidateLevelStore,
+        ApplyStatusStore
     }
 });

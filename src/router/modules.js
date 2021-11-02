@@ -123,6 +123,15 @@ export const routers = [
                 sidebar: true,
                 component: () => import('../views/interrogator/candidate-level/CandidateLevelIndex'),
             },
+            {
+                path: '/apply-status',
+                name: 'apply-status',
+                title: 'crm.Sidebar.ApplyStatuses',
+                icon: 'icon-circle-o',
+                permission: 'apply_status.read',
+                sidebar: true,
+                component: () => import('../views/interrogator/apply-status/ApplyStatusIndex'),
+            },
         ]
     },
     {
