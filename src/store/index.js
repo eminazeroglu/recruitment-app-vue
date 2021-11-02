@@ -20,6 +20,8 @@ import ProfessionStore from "./modules/profession.store";
 import SkillStore from "./modules/skill.store";
 import VacancyPublishStatusStore from "./modules/vacancy-publish-status.store";
 import DepartmentStore from "./modules/department.store";
+import VacancyStatusStore from "./modules/vacancy-status.store";
+import CandidateLevelStore from "./modules/candidate-level.store";
 
 export default new Vuex.Store({
     modules: {
@@ -39,6 +41,8 @@ export default new Vuex.Store({
         ProfessionStore,
         SkillStore,
         VacancyPublishStatusStore,
-        DepartmentStore
+        DepartmentStore,
+        VacancyStatusStore,
+        CandidateLevelStore
     }
 });

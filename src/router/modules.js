@@ -97,6 +97,15 @@ export const routers = [
                 component: () => import('../views/interrogator/vacancy-publish-status/VacancyPublishStatusIndex'),
             },
             {
+                path: '/vacancy-status',
+                name: 'vacancy-status',
+                title: 'crm.Sidebar.VacancyStatuses',
+                icon: 'icon-circle-o',
+                permission: 'vacancy_status.read',
+                sidebar: true,
+                component: () => import('../views/interrogator/vacancy-status/VacancyStatusIndex'),
+            },
+            {
                 path: '/department',
                 name: 'department',
                 title: 'crm.Sidebar.Departments',
@@ -104,6 +113,15 @@ export const routers = [
                 permission: 'department.read',
                 sidebar: true,
                 component: () => import('../views/interrogator/department/DepartmentIndex'),
+            },
+            {
+                path: '/candidate-level',
+                name: 'candidate-level',
+                title: 'crm.Sidebar.CandidateLevels',
+                icon: 'icon-circle-o',
+                permission: 'candidate_level.read',
+                sidebar: true,
+                component: () => import('../views/interrogator/candidate-level/CandidateLevelIndex'),
             },
         ]
     },
