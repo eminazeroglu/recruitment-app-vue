@@ -87,6 +87,24 @@ export const routers = [
                 sidebar: true,
                 component: () => import('../views/interrogator/skill/SkillIndex'),
             },
+            {
+                path: '/vacancy-publish-status',
+                name: 'vacancy-publish-status',
+                title: 'crm.Sidebar.VacancyPublishStatuses',
+                icon: 'icon-circle-o',
+                permission: 'vacancy_publish_status.read',
+                sidebar: true,
+                component: () => import('../views/interrogator/vacancy-publish-status/VacancyPublishStatusIndex'),
+            },
+            {
+                path: '/department',
+                name: 'department',
+                title: 'crm.Sidebar.Departments',
+                icon: 'icon-circle-o',
+                permission: 'department.read',
+                sidebar: true,
+                component: () => import('../views/interrogator/department/DepartmentIndex'),
+            },
         ]
     },
     {

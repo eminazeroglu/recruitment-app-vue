@@ -29,7 +29,7 @@
 }
 
 .sidebar-navbar li a {
-    @apply w-full inline-flex pr-4 pl-8 h-12 justify-between items-center text-white text-sm font-normal select-none
+    @apply w-full inline-flex pr-4 pl-8 min-h-12 justify-between items-center text-white text-sm font-normal select-none py-1
 }
 
 .sidebar-navbar li a .inner {
