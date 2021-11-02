@@ -106,6 +106,15 @@ export const routers = [
                 component: () => import('../views/interrogator/vacancy-status/VacancyStatusIndex'),
             },
             {
+                path: '/vacancy-compatibility',
+                name: 'vacancy-compatibility',
+                title: 'crm.Sidebar.VacancyCompatibilities',
+                icon: 'icon-circle-o',
+                permission: 'vacancy_compatibility.read',
+                sidebar: true,
+                component: () => import('../views/interrogator/vacancy-compatibility/VacancyCompatibilityIndex'),
+            },
+            {
                 path: '/department',
                 name: 'department',
                 title: 'crm.Sidebar.Departments',
@@ -132,6 +141,7 @@ export const routers = [
                 sidebar: true,
                 component: () => import('../views/interrogator/apply-status/ApplyStatusIndex'),
             },
+
         ]
     },
     {
