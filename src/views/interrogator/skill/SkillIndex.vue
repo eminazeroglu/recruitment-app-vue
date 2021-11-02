@@ -8,7 +8,7 @@
 
         <page-body>
             <data-grid
-                :data-source="professions"
+                :data-source="skills"
                 :columns="columns"
                 :action-column-width="120"
                 :action-column-text="translate(translateKey + '.Label.Action')"
@@ -62,10 +62,10 @@
                         </form-group>
 
                         <form-group
-                            :label="translate(translateKey + '.Label.Parent')"
-                            name="parent_id"
+                            :label="translate(translateKey + '.Label.Profession')"
+                            name="profession_id"
                         >
-                            <form-tree-select :options="listProfessions" v-model="form.parent_id"/>
+                            <form-tree-select :options="professions" v-model="form.profession_id"/>
                         </form-group>
 
                         <app-button class="justify-center" property="success" type="submit">
@@ -85,10 +85,10 @@
 import {mapActions, mapState} from 'vuex';
 
 const modalId = 'createModal';
-const translateKey = 'crm.Profession';
+const translateKey = 'crm.Skill';
 
 export default {
-    name: "ProfessionIndex",
+    name: "SkillIndex",
     data() {
         return {
             translateKey,
@@ -101,8 +101,8 @@ export default {
                     show: true
                 },
                 {
-                    caption: translateKey + '.Label.Parent',
-                    dataField: 'parent.name',
+                    caption: translateKey + '.Label.Profession',
+                    dataField: 'profession.name',
                     show: true,
                     width: 300
                 },
@@ -111,20 +111,22 @@ export default {
         }
     },
     computed: {
-        ...mapState('ProfessionStore', ['professions', 'listProfessions']),
+        ...mapState('SkillStore', ['skills']),
+        ...mapState('ProfessionStore', ['professions']),
         permission() {
             return this.currentPage.permission;
         }
     },
     methods: {
-        ...mapActions('ProfessionStore', ['getProfessions', 'setProfession', 'getSelectProfessions', 'actionProfession', 'deleteProfession']),
+        ...mapActions('SkillStore', ['getSkills', 'setSkill', 'actionSkill', 'deleteSkill']),
+        ...mapActions('ProfessionStore', ['getSelectProfessions']),
         /*
          * Form Create
          * */
         formCreate(item = {}) {
             const form = {
                 id: item.id || null,
-                parent_id: item.parent_id || null,
+                profession_id: item.profession_id || null,
                 translates: {}
             }
             this.appLanguages.filter(i => {
@@ -142,37 +144,37 @@ export default {
             this.modal(this.modalId)
             this.modelShow = false;
             this.resetError();
-            this.getSelectProfessions({id: item.id});
+            this.getSelectProfessions();
             this.formCreate(item);
         },
         /*
          * Remove
          * */
         remove(id) {
-            this.alert().then(r => this.deleteProfession(id).then(r => this.getProfessions()))
+            this.alert().then(r => this.deleteSkill(id).then(r => this.getSkills()))
         },
         /*
          * Action
          * */
         action(item, type) {
             let action = item.action[type] ? 0 : 1;
-            this.actionProfession({id: item.id, type, action}).then(r => this.getProfessions())
+            this.actionSkill({id: item.id, type, action}).then(r => this.getSkills())
         },
         /*
          * Save
          * */
         save() {
-            this.setProfession(this.form)
+            this.setSkill(this.form)
             .then(r => {
                 if (r) {
                     this.modal(this.modalId);
-                    this.getProfessions();
+                    this.getSkills();
                 }
             })
         }
     },
     created() {
-        this.getProfessions();
+        this.getSkills();
     }
 }
 </script>

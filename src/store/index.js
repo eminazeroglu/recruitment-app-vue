@@ -17,6 +17,7 @@ import RegionStore from "./modules/region.store";
 import EducationDegreeStore from "./modules/educationDegree.store";
 import UniversityStore from "./modules/university.store";
 import ProfessionStore from "./modules/profession.store";
+import SkillStore from "./modules/skill.store";
 
 export default new Vuex.Store({
     modules: {
@@ -33,6 +34,7 @@ export default new Vuex.Store({
         RegionStore,
         EducationDegreeStore,
         UniversityStore,
-        ProfessionStore
+        ProfessionStore,
+        SkillStore
     }
 });

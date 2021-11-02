@@ -7,7 +7,8 @@ const ProfessionStore = {
     /* State */
     state: {
         profession: {},
-        professions: []
+        professions: [],
+        listProfessions: [],
     },
 
     /* Mutation */
@@ -23,6 +24,12 @@ const ProfessionStore = {
          * */
         SET_LIST(state, payload) {
             state.professions = payload;
+        },
+        /*
+         * SET LIST PROFESSION
+         * */
+        SET_LIST_PROFESSION(state, payload) {
+            state.listProfessions = payload;
         }
     },
 
@@ -59,9 +66,11 @@ const ProfessionStore = {
          * Get Select Professions
          * */
         getSelectProfessions({commit}, payload = {}) {
-            return professionService.get(null, payload)
+            return professionService.get()
             .then(r => {
-                commit('SET_LIST', r.data.response);
+                let result = r.data.response;
+                if (payload.id) result = r.data.response.filter(i => parseFloat(i.id) !== parseFloat(payload.id))
+                commit('SET_LIST_PROFESSION', result);
             })
         },
         /*

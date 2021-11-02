@@ -78,6 +78,15 @@ export const routers = [
                 sidebar: true,
                 component: () => import('../views/interrogator/profession/ProfessionIndex'),
             },
+            {
+                path: '/skill',
+                name: 'skill',
+                title: 'crm.Sidebar.Skills',
+                icon: 'icon-circle-o',
+                permission: 'skill.read',
+                sidebar: true,
+                component: () => import('../views/interrogator/skill/SkillIndex'),
+            },
         ]
     },
     {
