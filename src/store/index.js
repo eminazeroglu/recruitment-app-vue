@@ -24,6 +24,7 @@ import VacancyStatusStore from "./modules/vacancy-status.store";
 import CandidateLevelStore from "./modules/candidate-level.store";
 import ApplyStatusStore from "./modules/apply-status.store";
 import VacancyCompatibilityStore from "./modules/vacancy-compatibility.store";
+import VacancyStore from "./modules/vacancy.store";
 
 export default new Vuex.Store({
     modules: {
@@ -47,6 +48,7 @@ export default new Vuex.Store({
         VacancyStatusStore,
         CandidateLevelStore,
         ApplyStatusStore,
-        VacancyCompatibilityStore
+        VacancyCompatibilityStore,
+        VacancyStore
     }
 });

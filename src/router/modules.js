@@ -9,6 +9,44 @@ export const routers = [
         component: () => import('../views/home/HomeIndex'),
     },
     {
+        path: '/vacancy',
+        name: 'vacancy',
+        title: 'crm.Sidebar.Vacancies',
+        icon: 'icon-layout',
+        permission: 'vacancy.read',
+        sidebar: true,
+        component: () => import('../views/vacancy/VacancyIndex'),
+        children: [
+            {
+                path: '/vacancy-form/:id?',
+                name: 'vacancy.form',
+                title: 'crm.Sidebar.VacancyCreate',
+                icon: 'icon-layout',
+                permission: 'vacancy.create',
+                sidebar: false,
+                component: () => import('../views/vacancy/VacancyForm'),
+            },
+            {
+                path: '/vacancy-clone/:id',
+                name: 'vacancy.clone',
+                title: 'crm.Sidebar.VacancyCreate',
+                icon: 'icon-layout',
+                permission: 'vacancy.action',
+                sidebar: false,
+                component: () => import('../views/vacancy/VacancyForm'),
+            },
+            {
+                path: '/vacancy-apply/:id',
+                name: 'vacancy.apply',
+                title: 'crm.Sidebar.VacancyApplyCandidates',
+                icon: 'icon-layout',
+                permission: 'vacancy.action',
+                sidebar: false,
+                component: () => import('../views/vacancy/VacancyApplyCandidate'),
+            }
+        ]
+    },
+    {
         path: '*',
         title: 'crm.Sidebar.Interrogators',
         icon: 'icon-package1',
