@@ -1,0 +1,6 @@
+.accordion-body {
+    @apply h-0 overflow-hidden
+}
+.accordion-body--open {
+    @apply h-auto
+}

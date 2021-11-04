@@ -16,6 +16,9 @@ import DropdownButton from "./dropdown/DropdownButton";
 import DropdownItems from "./dropdown/DropdownItems";
 import DropdownItem from "./dropdown/DropdownItem";
 import StatsBox from "./stats-box/StatsBox";
+import Accordion from "./accordion/Accordion";
+import AccordionItem from "./accordion/AccordionItem";
+import CandidateFilter from "./candidate-filter/CandidateFilter";
 
 export default {
     AppButton,
@@ -35,5 +38,8 @@ export default {
     DropdownItems,
     DropdownButton,
     DropdownItem,
-    StatsBox
+    StatsBox,
+    Accordion,
+    AccordionItem,
+    CandidateFilter
 }

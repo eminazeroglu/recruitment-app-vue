@@ -7,7 +7,8 @@ const VacancyStore = {
     /* State */
     state: {
         vacancy: {},
-        vacancies: []
+        vacancies: [],
+        vacancyCandidates: [],
     },
 
     /* Mutation */
@@ -23,6 +24,12 @@ const VacancyStore = {
          * */
         SET_LIST(state, payload) {
             state.vacancies = payload;
+        },
+        /*
+         * SET LIST CANDIDATE
+         * */
+        SET_LIST_CANDIDATE(state, payload) {
+            state.vacancyCandidates = payload;
         }
     },
 
@@ -47,12 +54,35 @@ const VacancyStore = {
             commit('SET_LIST', data);
         },
         /*
+         * Get Vacancy Candidates
+         * */
+        getVacancyCandidates({commit}, payload = {}) {
+            let vacancy_id = payload.vacancy_id;
+            delete payload.vacancy_id;
+            if (vacancy_id) {
+                const data = new CustomStore({
+                    load: function (loadOptions) {
+                        return vacancyService.get(vacancy_id + '/candidate', {datatable: true, ...loadOptions, ...payload})
+                        .then(r => {
+                            const data = r.data.response;
+                            return {
+                                data: data.data,
+                                totalCount: data.total
+                            }
+                        })
+                    }
+                })
+                commit('SET_LIST_CANDIDATE', data);
+            }
+        },
+        /*
          * Get Vacancy
          * */
         getVacancy({commit}, payload) {
             return vacancyService.get(payload)
             .then(r => {
                 commit('SET_DATA', r.data.response);
+                return r.data.response;
             })
         },
         /*
