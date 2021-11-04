@@ -73,10 +73,10 @@ const VacancyStore = {
             return vacancyService.post(null, payload);
         },
         /*
-         * Action Vacancy
+         * Change Status Vacancy
          * */
-        actionVacancy({commit}, payload) {
-            return vacancyService.post('action', payload);
+        changeStatusVacancy({commit}, payload) {
+            return vacancyService.post('change-status', payload);
         },
         /*
          * Delete Vacancy

@@ -2,7 +2,7 @@
     <page>
         <page-head>
             <div class="flex space-x-5">
-                <app-button property="warning" icon="icon-filter" @click="createModal">
+                <app-button property="warning" icon="icon-filter">
                     {{ translate('button.Filter') }}
                 </app-button>
                 <app-button property="success" icon="icon-add" :route="{name: 'vacancy.form'}">
@@ -20,9 +20,19 @@
                 :action-column-text="''"
             >
                 <div slot="statusSlot" slot-scope="list">
-                    <badge property="success" v-if="list.row.status.key === 'active'">{{ list.row.status.name }}</badge>
-                    <badge v-if="list.row.status.key === 'draft'">{{ list.row.status.name }}</badge>
-                    <badge property="dark" v-if="list.row.status.key === 'archive'">{{ list.row.status.name }}</badge>
+                    <badge property="success" v-if="list.row.status.key === 'published'">{{
+                            list.row.status.name
+                                                                                         }}
+                    </badge>
+                    <badge v-else-if="list.row.status.key === 'draft'">{{ list.row.status.name }}</badge>
+                    <badge property="dark" v-else-if="list.row.status.key === 'completed'">{{
+                            list.row.status.name
+                                                                                           }}
+                    </badge>
+                    <badge property="danger" v-else-if="list.row.status.key === 'canceled'">{{
+                            list.row.status.name
+                                                                                            }}
+                    </badge>
                 </div>
                 <div slot="actionSlot" slot-scope="list">
                     <dropdown v-if="can(permission + '.action')">
@@ -46,7 +56,7 @@
                                 <i class="icon-users"></i>
                                 {{ translate('button.Candidates') }}
                             </dropdown-item>
-                            <dropdown-item :style="dropdownItemStyle">
+                            <dropdown-item :style="dropdownItemStyle" @click="changeStatusPopup(list.row)">
                                 <i class="icon-repeat"></i>
                                 {{ translate('button.ChangeStatus') }}
                             </dropdown-item>
@@ -56,37 +66,32 @@
                             </dropdown-item>
                         </dropdown-items>
                     </dropdown>
-<!--                    <app-button
-                        v-if="can(permission + '.update')"
-                        :route="{name: 'vacancy.form', params: {id: list.row.id}}"
-                        :sm="true"
-                        :title="translate('button.Edit')"
-                        icon="icon-edit-2"
-                        property="primary"
-                    />
-
-                    <app-button
-                        v-if="can(permission + '.action') && list.row.apply_candidates_count > 0"
-                        :route="{name: 'vacancy.apply', params: {id: list.row.id}}"
-                        :sm="true"
-                        :title="translate('button.Candidates')"
-                        icon="icon-users"
-                        property="warning"
-                    />
-
-                    <app-button
-                        v-if="can(permission + '.delete')"
-                        :sm="true"
-                        @click="remove(list.row.id)"
-                        :title="translate('button.Delete')"
-                        icon="icon-trash-2"
-                        property="danger"
-                    />-->
 
                 </div>
             </data-grid>
         </page-body>
 
+
+        <!-- Change Status Popup -->
+        <modal id="VacancyChangeStatusPopup" size="xs" modal-box-style="overflow: initial">
+            <modal-head>
+                <modal-title>{{ changeStatusForm.title }}</modal-title>
+            </modal-head>
+            <modal-body style="overflow: initial">
+                <form @submit.prevent="changeStatus">
+                    <grid>
+                        <form-group :label="translateKey + '.Label.Status'">
+                            <form-tree-select :clearable="false" :options="vacancyPublishStatuses" v-model="changeStatusForm.status_id"/>
+                        </form-group>
+
+                        <app-button property="success" class="justify-center">
+                            {{ translate('button.Save') }}
+                        </app-button>
+                    </grid>
+                </form>
+            </modal-body>
+        </modal>
+        <!-- #Change Status Popup -->
     </page>
 </template>
 
@@ -98,6 +103,15 @@ import {mapActions, mapState} from 'vuex';
 
 const translateKey = 'crm.Vacancy';
 
+
+const changeStatusForm = () => {
+    return {
+        title: null,
+        id: null,
+        status_id: null
+    }
+}
+
 export default {
     name: "VacancyIndex",
     data() {
@@ -105,6 +119,7 @@ export default {
             translateKey,
             modelShow: false,
             dropdownItemStyle: 'justify-content: flex-start; text-align: left; align-items: center',
+            changeStatusForm: changeStatusForm(),
             columns: [
                 {
                     caption: translateKey + '.Label.Name',
@@ -148,7 +163,7 @@ export default {
                     dataField: 'status',
                     show: true,
                     slot: 'statusSlot',
-                    width: 100,
+                    width: 150,
                     alignment: 'center'
                 },
             ],
@@ -156,25 +171,34 @@ export default {
     },
     computed: {
         ...mapState('VacancyStore', ['vacancies']),
+        ...mapState('VacancyPublishStatusStore', ['vacancyPublishStatuses']),
         permission() {
             return this.currentPage.permission;
         }
     },
     methods: {
-        ...mapActions('VacancyStore', ['getVacancies', 'actionVacancy', 'deleteVacancy']),
+        ...mapActions('VacancyStore', ['getVacancies', 'changeStatusVacancy']),
+        ...mapActions('VacancyPublishStatusStore', ['getSelectVacancyPublishStatuses']),
         /*
-         * Remove
+         * Change Status Popup
          * */
-        remove(id) {
-            this.alert().then(r => this.deleteVacancy(id).then(r => this.getVacancies()))
+        changeStatusPopup(item) {
+            this.modal('VacancyChangeStatusPopup');
+            this.getSelectVacancyPublishStatuses();
+            this.changeStatusForm = changeStatusForm();
+            this.changeStatusForm.title = item.name;
+            this.changeStatusForm.id = item.id;
+            this.changeStatusForm.status_id = item.status.id;
         },
         /*
-         * Action
+         * Change Status
          * */
-        action(item, type) {
-            let action = item.action[type] ? 0 : 1;
-            this.actionVacancy({id: item.id, type, action}).then(r => this.getVacancies())
-        },
+        changeStatus() {
+            delete this.changeStatusForm.title;
+            this.changeStatusVacancy(this.changeStatusForm);
+            this.modal('VacancyChangeStatusPopup');
+            this.getVacancies();
+        }
     },
     created() {
         this.getVacancies();

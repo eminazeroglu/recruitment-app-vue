@@ -3,6 +3,7 @@
         v-bind="$attrs"
         :options="options"
         :normalizer="normalizer"
+        :clearable="clearable"
         v-model="element"
         @input="$emit('select', $event)"
     />
@@ -21,6 +22,9 @@ export default {
         options: {
             default: []
         },
+        clearable: {
+            default: true
+        }
     },
     components: {
         TreeSelect

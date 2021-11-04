@@ -33,7 +33,7 @@
                     />
 
                     <app-button
-                        v-if="can(permission + '.delete')"
+                        v-if="can(permission + '.delete') && list.row.id > 4"
                         :sm="true"
                         @click="remove(list.row.id)"
                         :title="translate('button.Delete')"
