@@ -60,6 +60,10 @@
                                 <i class="icon-repeat"></i>
                                 {{ translate('button.ChangeStatus') }}
                             </dropdown-item>
+                            <dropdown-item :style="dropdownItemStyle" @click="changeRecruitPopup(list.row)">
+                                <i class="icon-user-check"></i>
+                                {{ translate('button.ChangeRecruit') }}
+                            </dropdown-item>
                             <dropdown-item :style="dropdownItemStyle" :route="{name: 'vacancy.clone', params: {id: list.row.id}}">
                                 <i class="icon-clone"></i>
                                 {{ translate('button.Copy') }}
@@ -92,6 +96,27 @@
             </modal-body>
         </modal>
         <!-- #Change Status Popup -->
+
+        <!-- Recruit Popup -->
+        <modal id="VacancyChangeRecruitPopup" size="xs" modal-box-style="overflow: initial">
+            <modal-head>
+                <modal-title>{{ changeRecruitForm.title }}</modal-title>
+            </modal-head>
+            <modal-body style="overflow: initial">
+                <form @submit.prevent="changeRecruit">
+                    <grid>
+                        <form-group :label="translateKey + '.Label.Hr'">
+                            <form-tree-select :clearable="false" displayExpr="fullname" :options="users" v-model="changeRecruitForm.user_id"/>
+                        </form-group>
+
+                        <app-button property="success" class="justify-center">
+                            {{ translate('button.Save') }}
+                        </app-button>
+                    </grid>
+                </form>
+            </modal-body>
+        </modal>
+        <!-- #Recruit Popup -->
     </page>
 </template>
 
@@ -112,6 +137,14 @@ const changeStatusForm = () => {
     }
 }
 
+const changeRecruitForm = () => {
+    return {
+        title: null,
+        id: null,
+        user_id: null
+    }
+}
+
 export default {
     name: "VacancyIndex",
     data() {
@@ -120,6 +153,7 @@ export default {
             modelShow: false,
             dropdownItemStyle: 'justify-content: flex-start; text-align: left; align-items: center',
             changeStatusForm: changeStatusForm(),
+            changeRecruitForm: changeRecruitForm(),
             columns: [
                 {
                     caption: translateKey + '.Label.Name',
@@ -172,13 +206,15 @@ export default {
     computed: {
         ...mapState('VacancyStore', ['vacancies']),
         ...mapState('VacancyPublishStatusStore', ['vacancyPublishStatuses']),
+        ...mapState('UserStore', ['users']),
         permission() {
             return this.currentPage.permission;
         }
     },
     methods: {
-        ...mapActions('VacancyStore', ['getVacancies', 'changeStatusVacancy']),
+        ...mapActions('VacancyStore', ['getVacancies', 'changeStatusVacancy', 'changeRecruitVacancy']),
         ...mapActions('VacancyPublishStatusStore', ['getSelectVacancyPublishStatuses']),
+        ...mapActions('UserStore', ['getSelectUsers']),
         /*
          * Change Status Popup
          * */
@@ -197,6 +233,26 @@ export default {
             delete this.changeStatusForm.title;
             this.changeStatusVacancy(this.changeStatusForm);
             this.modal('VacancyChangeStatusPopup');
+            this.getVacancies();
+        },
+        /*
+         * Change Recruit Popup
+         * */
+        changeRecruitPopup(item) {
+            this.modal('VacancyChangeRecruitPopup');
+            this.getSelectUsers({type: 'hr'});
+            this.changeRecruitForm = changeRecruitForm();
+            this.changeRecruitForm.title = item.name;
+            this.changeRecruitForm.id = item.id;
+            this.changeRecruitForm.user_id = item.user.id;
+        },
+        /*
+         * Change Recruit
+         * */
+        changeRecruit() {
+            delete this.changeRecruitForm.title;
+            this.changeRecruitVacancy(this.changeRecruitForm);
+            this.modal('VacancyChangeRecruitPopup');
             this.getVacancies();
         }
     },

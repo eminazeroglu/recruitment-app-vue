@@ -79,6 +79,12 @@ const VacancyStore = {
             return vacancyService.post('change-status', payload);
         },
         /*
+         * Change Recruit Vacancy
+         * */
+        changeRecruitVacancy({commit}, payload) {
+            return vacancyService.post('change-recruit', payload);
+        },
+        /*
          * Delete Vacancy
          * */
         deleteVacancy({commit}, payload) {
