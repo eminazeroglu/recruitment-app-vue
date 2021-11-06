@@ -1,7 +1,7 @@
 import CustomStore from "devextreme/data/custom_store";
-import LanguageService from "../../services/language.service";
+import LanguageService from "../../services/systemLanguage.service";
 
-const LanguageStore = {
+const SystemLanguageStore = {
     namespaced: true,
 
     /* State */
@@ -137,4 +137,4 @@ const LanguageStore = {
     getters: {}
 }
 
-export default LanguageStore;
+export default SystemLanguageStore;

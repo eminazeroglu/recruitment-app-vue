@@ -7,7 +7,7 @@ import AppStore from "./modules/app.store";
 import AuthStore from "./modules/auth.store";
 import UserStore from "./modules/user.store";
 import PermissionStore from "./modules/permission.store";
-import LanguageStore from "./modules/language.store";
+import SystemLanguageStore from "./modules/system-language.store";
 import SeoStore from "./modules/seo.store";
 import SettingStore from "./modules/setting.store";
 import FamilyStatusStore from "./modules/family-status.store";
@@ -32,7 +32,7 @@ export default new Vuex.Store({
         AuthStore,
         UserStore,
         PermissionStore,
-        LanguageStore,
+        LanguageStore: SystemLanguageStore,
         SeoStore,
         SettingStore,
         FamilyStatusStore,

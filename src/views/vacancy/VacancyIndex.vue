@@ -2,8 +2,11 @@
     <page>
         <page-head>
             <div class="flex space-x-5">
-                <app-button property="warning" icon="icon-filter">
+                <app-button property="warning" icon="icon-filter" @click="filterModal">
                     {{ translate('button.Filter') }}
+                </app-button>
+                <app-button property="danger" icon="icon-cancel" v-if="Object.keys(filterQuery).map(i => filterQuery[i] !== null).includes(true)" @click="filterReset">
+                    {{ translate('button.Reset') }}
                 </app-button>
                 <app-button property="success" icon="icon-add" :route="{name: 'vacancy.form'}">
                     {{ translate('button.Add') }}
@@ -117,6 +120,43 @@
             </modal-body>
         </modal>
         <!-- #Recruit Popup -->
+
+        <!-- Filter Popup -->
+        <modal id="VacancyFilterPopup" size="xs" modal-box-style="overflow: initial">
+            <modal-head>
+                <modal-title>{{ translate(translateKey + '.Label.Filter') }}</modal-title>
+            </modal-head>
+            <modal-body style="overflow: initial">
+                <form @submit.prevent="filter">
+                    <grid>
+                        <form-group :label="translateKey + '.Label.Code'">
+                            <form-text v-model="filterQuery.code"/>
+                        </form-group>
+
+                        <form-group :label="translateKey + '.Label.Name'">
+                            <form-text v-model="filterQuery.name"/>
+                        </form-group>
+
+                        <form-group :label="translateKey + '.Label.Hr'">
+                            <form-tree-select displayExpr="fullname" :options="users" v-model="filterQuery.user_id"/>
+                        </form-group>
+
+                        <form-group :label="translateKey + '.Label.City'">
+                            <form-tree-select :options="cities" v-model="filterQuery.city_id"/>
+                        </form-group>
+
+                        <form-group :label="translateKey + '.Label.Profession'">
+                            <form-tree-select :options="listProfessions" v-model="filterQuery.profession_id"/>
+                        </form-group>
+
+                        <app-button property="success" class="justify-center">
+                            {{ translate('button.Search') }}
+                        </app-button>
+                    </grid>
+                </form>
+            </modal-body>
+        </modal>
+        <!-- #Filter Popup -->
     </page>
 </template>
 
@@ -154,7 +194,21 @@ export default {
             dropdownItemStyle: 'justify-content: flex-start; text-align: left; align-items: center',
             changeStatusForm: changeStatusForm(),
             changeRecruitForm: changeRecruitForm(),
+            filterQuery: {
+                code: null,
+                name: null,
+                user_id: null,
+                city_id: null,
+                profession_id: null,
+            },
             columns: [
+                {
+                    caption: translateKey + '.Label.Code',
+                    dataField: 'code',
+                    show: true,
+                    width: 100,
+                    alignment: 'center'
+                },
                 {
                     caption: translateKey + '.Label.Name',
                     dataField: 'name',
@@ -207,6 +261,8 @@ export default {
         ...mapState('VacancyStore', ['vacancies']),
         ...mapState('VacancyPublishStatusStore', ['vacancyPublishStatuses']),
         ...mapState('UserStore', ['users']),
+        ...mapState('CityStore', ['cities']),
+        ...mapState('ProfessionStore', ['listProfessions']),
         permission() {
             return this.currentPage.permission;
         }
@@ -215,6 +271,8 @@ export default {
         ...mapActions('VacancyStore', ['getVacancies', 'changeStatusVacancy', 'changeRecruitVacancy']),
         ...mapActions('VacancyPublishStatusStore', ['getSelectVacancyPublishStatuses']),
         ...mapActions('UserStore', ['getSelectUsers']),
+        ...mapActions('CityStore', ['getSelectCities']),
+        ...mapActions('ProfessionStore', ['getSelectProfessions']),
         /*
          * Change Status Popup
          * */
@@ -253,6 +311,29 @@ export default {
             delete this.changeRecruitForm.title;
             this.changeRecruitVacancy(this.changeRecruitForm);
             this.modal('VacancyChangeRecruitPopup');
+            this.getVacancies();
+        },
+        /*
+         * Filter Modal
+         * */
+        filterModal() {
+            this.modal('VacancyFilterPopup');
+            this.getSelectUsers({type: 'hr'});
+            this.getSelectCities({orderName: 'asc'});
+            this.getSelectProfessions({orderName: 'asc'});
+        },
+        /*
+         * Filter
+         * */
+        filter() {
+            this.modal('VacancyFilterPopup');
+            this.getVacancies(this.filterQuery);
+        },
+        /*
+         * Filter Reset
+         * */
+        filterReset() {
+            this.filterQuery = Object.keys(this.filterQuery).map(i => this.filterQuery[i] = null)
             this.getVacancies();
         }
     },

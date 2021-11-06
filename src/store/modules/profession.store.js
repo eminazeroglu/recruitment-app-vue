@@ -66,7 +66,7 @@ const ProfessionStore = {
          * Get Select Professions
          * */
         getSelectProfessions({commit}, payload = {}) {
-            return professionService.get()
+            return professionService.get('', payload)
             .then(r => {
                 let result = r.data.response;
                 if (payload.id) result = r.data.response.filter(i => parseFloat(i.id) !== parseFloat(payload.id))
