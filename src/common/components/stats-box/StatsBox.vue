@@ -9,7 +9,7 @@
                     <span class="font-semibold text-xl text-blueGray-700" v-if="count">{{ count }}</span>
                 </div>
                 <div class="relative w-auto pl-4 flex-initial">
-                    <div :class="['p-3 text-center inline-flex items-center justify-center w-12 h-12 shadow-lg rounded-full', iconBg]">
+                    <div :class="['p-3 text-center inline-flex items-center justify-center w-12 h-12 shadow-lg rounded-full', iconBg, iconColor]">
                         <i v-if="icon" :class="icon"></i>
                     </div>
                 </div>
@@ -43,6 +43,9 @@ export default {
             default: 0
         },
         iconBg: {
+            default: null
+        },
+        iconColor: {
             default: null
         },
         icon: {

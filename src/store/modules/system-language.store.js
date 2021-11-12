@@ -6,8 +6,8 @@ const SystemLanguageStore = {
 
     /* State */
     state: {
-        language: {},
-        languages: [],
+        system_language: {},
+        system_languages: [],
         translates: [],
         translateKeys: []
     },
@@ -18,13 +18,13 @@ const SystemLanguageStore = {
          * SET DATA
          * */
         SET_DATA(state, payload) {
-            state.language = payload;
+            state.system_language = payload;
         },
         /*
          * SET LIST
          * */
         SET_LIST(state, payload) {
-            state.languages = payload;
+            state.system_languages = payload;
         },
         /*
          * SET TRANSLATES
@@ -45,7 +45,7 @@ const SystemLanguageStore = {
         /*
          * Get Languages
          * */
-        getLanguages({commit}, payload = null) {
+        getSystemLanguages({commit}, payload = null) {
             const data = new CustomStore({
                 load: function (loadOptions) {
                     return LanguageService.get(null, {datatable: true, ...loadOptions})
@@ -90,7 +90,7 @@ const SystemLanguageStore = {
         /*
          * Get Language
          * */
-        getLanguage({commit}, payload) {
+        getSystemLanguage({commit}, payload) {
             LanguageService.get(payload)
             .then(r => {
                 commit('SET_DATA', r.data.response);
@@ -99,7 +99,7 @@ const SystemLanguageStore = {
         /*
          * Get Select Languages
          * */
-        getSelectLanguages({commit}, payload = {}) {
+        getSelectSystemLanguages({commit}, payload = {}) {
             return LanguageService.get(null, payload)
             .then(r => {
                 commit('SET_LIST', r.data.response);
@@ -108,7 +108,7 @@ const SystemLanguageStore = {
         /*
          * Set Language
          * */
-        setLanguage({commit}, payload) {
+        setSystemLanguage({commit}, payload) {
             if (payload.id)
                 return LanguageService.put(payload.id, payload);
             return LanguageService.post(null, payload);
@@ -116,19 +116,19 @@ const SystemLanguageStore = {
         /*
          * Set Translate
          * */
-        setTranslate({commit}, payload) {
+        setSystemTranslate({commit}, payload) {
             return LanguageService.post('translate-change', payload);
         },
         /*
          * Action Language
          * */
-        actionLanguage({commit}, payload) {
+        actionSystemLanguage({commit}, payload) {
             return LanguageService.post('action', payload);
         },
         /*
          * Delete Language
          * */
-        deleteLanguage({commit}, payload) {
+        deleteSystemLanguage({commit}, payload) {
             return LanguageService.delete(payload);
         }
     },

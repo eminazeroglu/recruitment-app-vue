@@ -18,6 +18,7 @@ import EducationDegreeStore from "./modules/educationDegree.store";
 import UniversityStore from "./modules/university.store";
 import ProfessionStore from "./modules/profession.store";
 import SkillStore from "./modules/skill.store";
+import LanguageStore from "./modules/language.store";
 import VacancyPublishStatusStore from "./modules/vacancy-publish-status.store";
 import DepartmentStore from "./modules/department.store";
 import VacancyStatusStore from "./modules/vacancy-status.store";
@@ -32,7 +33,7 @@ export default new Vuex.Store({
         AuthStore,
         UserStore,
         PermissionStore,
-        LanguageStore: SystemLanguageStore,
+        SystemLanguageStore,
         SeoStore,
         SettingStore,
         FamilyStatusStore,
@@ -43,6 +44,7 @@ export default new Vuex.Store({
         UniversityStore,
         ProfessionStore,
         SkillStore,
+        LanguageStore,
         VacancyPublishStatusStore,
         DepartmentStore,
         VacancyStatusStore,

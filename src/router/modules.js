@@ -126,6 +126,15 @@ export const routers = [
                 component: () => import('../views/interrogator/skill/SkillIndex'),
             },
             {
+                path: '/language',
+                name: 'language',
+                title: 'crm.Sidebar.Languages',
+                icon: 'icon-circle-o',
+                permission: 'language.read',
+                sidebar: true,
+                component: () => import('../views/interrogator/language/LanguageIndex'),
+            },
+            {
                 path: '/vacancy-publish-status',
                 name: 'vacancy-publish-status',
                 title: 'crm.Sidebar.VacancyPublishStatuses',
@@ -202,11 +211,11 @@ export const routers = [
             * Language
             * */
             {
-                path: '/language',
-                name: 'language',
+                path: '/system-language',
+                name: 'system_language',
                 title: 'crm.Sidebar.SettingLanguages',
                 icon: 'icon-language',
-                permission: 'language.read',
+                permission: 'system_language.read',
                 sidebar: true,
                 component: () => import('../views/setting/language/LanguageIndex'),
             },
@@ -218,7 +227,7 @@ export const routers = [
                 name: 'translate',
                 title: 'crm.Sidebar.SettingTranslates',
                 icon: 'icon-repeat',
-                permission: 'language.read',
+                permission: 'system_language.read',
                 sidebar: true,
                 component: () => import('../views/setting/language/LanguageTranslate'),
             },

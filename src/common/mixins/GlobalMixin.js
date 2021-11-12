@@ -1,7 +1,6 @@
 import Helpers from "../../plugins/helpers";
 import {mapState, mapActions} from 'vuex'
 import {routers} from "../../router/modules";
-import eventBus from "../../plugins/eventBus";
 
 const GlobalMixin = {
     computed: {

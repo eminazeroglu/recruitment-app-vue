@@ -16,6 +16,6 @@
 .dx-treelist-text-content {
     @apply relative top-1;
 }
-.dx-template-wrapper {
+tr td:last-child .dx-template-wrapper {
     @apply space-x-1
 }

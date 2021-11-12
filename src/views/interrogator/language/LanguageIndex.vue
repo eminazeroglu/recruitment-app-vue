@@ -8,14 +8,14 @@
 
         <page-body>
             <data-grid
-                :data-source="system_languages"
+                :data-source="languages"
                 :columns="columns"
                 :action-column-width="120"
-                :action-column-text="translate(translateKey + '.Table.Action')"
+                :action-column-text="translate(translateKey + '.Label.Action')"
             >
                 <div slot="actionSlot" slot-scope="list">
                     <app-button
-                        v-if="can(permission + '.update') && list.row.id !== 1"
+                        v-if="can(permission + '.update')"
                         @click="createModal(list.row.form)"
                         :sm="true"
                         :title="translate('button.Edit')"
@@ -24,7 +24,7 @@
                     />
 
                     <app-button
-                        v-if="can(permission + '.action') && list.row.id !== 1"
+                        v-if="can(permission + '.action')"
                         :sm="true"
                         @click="action(list.row, 'active')"
                         :title="list.row.action.active ? translate('button.DeActivate') : translate('button.Activate')"
@@ -33,7 +33,7 @@
                     />
 
                     <app-button
-                        v-if="can(permission + '.delete') && list.row.id !== 1"
+                        v-if="can(permission + '.delete')"
                         :sm="true"
                         @click="remove(list.row.id)"
                         :title="translate('button.Delete')"
@@ -49,15 +49,16 @@
             <modal-head>
                 <modal-title>{{ currentPage.title }}</modal-title>
             </modal-head>
-            <modal-body>
+            <modal-body v-if="modelShow">
                 <form @submit.prevent="save">
                     <grid>
-                        <form-group :label="translateKey + '.Label.Name'" name="name">
-                            <form-text v-model="form.name"/>
-                        </form-group>
-
-                        <form-group :label="translateKey + '.Label.Code'" name="code">
-                            <form-text v-model="form.code"/>
+                        <form-group
+                            :label="translate(translateKey + '.Label.Name') + (appLanguages.length > 1 ? ' ('+lang.name+')' : '')"
+                            :name="'translates.'+lang.code+'.name'"
+                            v-for="(lang, index) in appLanguages"
+                            :key="index"
+                        >
+                            <form-text v-model="form.translates[lang.code].name"/>
                         </form-group>
 
                         <app-button class="justify-center" property="success" type="submit">
@@ -76,16 +77,8 @@
  * */
 import {mapActions, mapState} from 'vuex';
 
-const formObject = (item = {}) => {
-    return {
-        id: item.id || null,
-        name: item.name || null,
-        code: item.code || null,
-    }
-}
-
 const modalId = 'createModal';
-const translateKey = 'crm.SystemLanguage';
+const translateKey = 'crm.Language';
 
 export default {
     name: "LanguageIndex",
@@ -93,34 +86,47 @@ export default {
         return {
             translateKey,
             modalId,
-            permission: 'system_language',
+            modelShow: false,
             columns: [
                 {
-                    caption: translateKey + '.Table.Name',
+                    caption: translateKey + '.Label.Name',
                     dataField: 'name',
                     show: true
                 },
             ],
-            form: formObject()
+            form: {}
         }
     },
     computed: {
-        ...mapState('SystemLanguageStore', ['system_languages']),
+        ...mapState('LanguageStore', ['languages']),
+        permission() {
+            return this.currentPage.permission;
+        }
     },
     methods: {
-        ...mapActions('SystemLanguageStore', ['getSystemLanguages', 'setSystemLanguage', 'actionSystemLanguage', 'deleteSystemLanguage']),
+        ...mapActions('LanguageStore', ['getLanguages', 'setLanguage', 'actionLanguage', 'deleteLanguage']),
         /*
          * Form Create
          * */
         formCreate(item = {}) {
-            const self = this;
-            self.form = formObject(item);
+            const form = {
+                id: item.id || null,
+                translates: {}
+            }
+            this.appLanguages.filter(i => {
+                form.translates[i.code] = {
+                    name: item.translates && item.translates[i.code] ? item.translates[i.code].name : null,
+                }
+            });
+            this.form = form;
+            this.modelShow = true;
         },
         /*
          * Create Modal
          * */
         createModal(item = {}) {
             this.modal(this.modalId)
+            this.modelShow = false;
             this.resetError();
             this.formCreate(item);
         },
@@ -128,30 +134,30 @@ export default {
          * Remove
          * */
         remove(id) {
-            this.alert().then(r => this.deleteSystemLanguage(id).then(r => this.getSystemLanguages()))
+            this.alert().then(r => this.deleteLanguage(id).then(r => this.getLanguages()))
         },
         /*
          * Action
          * */
         action(item, type) {
             let action = item.action[type] ? 0 : 1;
-            this.actionSystemLanguage({id: item.id, type, action}).then(r => window.location.reload())
+            this.actionLanguage({id: item.id, type, action}).then(r => this.getLanguages())
         },
         /*
          * Save
          * */
         save() {
-            this.setSystemLanguage(this.form)
+            this.setLanguage(this.form)
             .then(r => {
                 if (r) {
                     this.modal(this.modalId);
-                    this.getSystemLanguages();
+                    this.getLanguages();
                 }
             })
         }
     },
     created() {
-        this.getSystemLanguages();
+        this.getLanguages();
     }
 }
 </script>
