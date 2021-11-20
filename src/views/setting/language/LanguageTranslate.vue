@@ -134,7 +134,7 @@ export default {
         }
     },
     computed: {
-        ...mapState('LanguageStore', ['translates', 'translateKeys']),
+        ...mapState('SystemLanguageStore', ['translates', 'translateKeys']),
         permission() {
             return this.currentPage.permission;
         },
@@ -144,7 +144,7 @@ export default {
     },
     methods: {
         ...mapActions('AppStore', ['start']),
-        ...mapActions('LanguageStore', ['getTranslates', 'getTranslateKeys', 'setTranslate']),
+        ...mapActions('SystemLanguageStore', ['getTranslates', 'getTranslateKeys', 'setTranslate']),
         /*
          * Select Key
          * */

@@ -119,6 +119,18 @@ const VacancyStore = {
          * */
         deleteVacancy({commit}, payload) {
             return vacancyService.delete(payload);
+        },
+        /*
+        * Set Apply Candidate Compatibility
+        * */
+        setApplyCandidateCompatibility({commit}, payload) {
+            return vacancyService.post('candidate/compatibility', payload);
+        },
+        /*
+         * Set Apply Candidate Status
+         * */
+        setApplyCandidateStatus({commit}, payload) {
+            return vacancyService.post('candidate/status', payload);
         }
     },
 

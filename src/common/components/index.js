@@ -19,6 +19,7 @@ import StatsBox from "./stats-box/StatsBox";
 import Accordion from "./accordion/Accordion";
 import AccordionItem from "./accordion/AccordionItem";
 import CandidateFilter from "./candidate-filter/CandidateFilter";
+import TreeList from "./treelist/TreeList";
 
 export default {
     AppButton,
@@ -41,5 +42,6 @@ export default {
     StatsBox,
     Accordion,
     AccordionItem,
+    TreeList,
     CandidateFilter
 }

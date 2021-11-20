@@ -6,7 +6,7 @@
                 <form @submit.prevent="save">
                     <grid>
                         <form-group :label="translateKey + '.Label.SystemLanguage'" name="value.language">
-                            <form-tree-select :options="languages" valueExpr="code" v-model="form.value.language"/>
+                            <form-tree-select :options="system_languages" valueExpr="code" v-model="form.value.language"/>
                         </form-group>
 
                         <form-group :label="translateKey + '.Label.Email'" name="value.emails">
@@ -82,11 +82,11 @@ export default {
         }
     },
     computed: {
-        ...mapState('LanguageStore', ['languages']),
+        ...mapState('SystemLanguageStore', ['system_languages']),
         ...mapState('SettingStore', ['setting'])
     },
     methods: {
-        ...mapActions('LanguageStore', ['getSelectLanguages']),
+        ...mapActions('SystemLanguageStore', ['getSelectSystemLanguages']),
         ...mapActions('SettingStore', ['getSetting', 'setSetting']),
         /*
          * Add Element
@@ -117,7 +117,7 @@ export default {
         }
     },
     created() {
-        this.getSelectLanguages();
+        this.getSelectSystemLanguages();
         this.getSetting(this.form.key)
         .then(r => {
             this.form.value = this.setting.value;

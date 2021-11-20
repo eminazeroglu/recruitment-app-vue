@@ -47,6 +47,16 @@ const Helpers = {
         }, null);
     },
     /*
+     * Recursive Not Search
+     * */
+    recursiveNotSearch(find, search, arr, objectName = 'children') {
+        return arr.filter(o => {
+            const keep = o[find] !== search;
+            if (keep && o[objectName]) o[objectName] = this.recursiveNotSearch(find, search, o[objectName], objectName);
+            return keep;
+        });
+    },
+    /*
      * Can
      * */
     can(value) {

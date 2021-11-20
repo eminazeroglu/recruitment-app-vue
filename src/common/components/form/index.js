@@ -10,6 +10,7 @@ import FormTag from "./tag/FormTag";
 import FormColor from "./color/FormColor";
 import FormPhoto from "./photo/FormPhoto";
 import FormPhotos from "./photos/FormPhotos";
+import FormDate from "./date/FormDate";
 
 
 import "./index.css"
@@ -26,5 +27,6 @@ export default {
     FormTag,
     FormColor,
     FormPhoto,
-    FormPhotos
+    FormPhotos,
+    FormDate
 }

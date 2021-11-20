@@ -92,3 +92,7 @@ textarea.form-element {
     border: none;
     width: 100%;
 }
+
+.mx-datepicker {
+    width: calc(100% - 5px);
+}
