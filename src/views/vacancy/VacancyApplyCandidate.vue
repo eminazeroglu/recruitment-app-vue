@@ -10,28 +10,45 @@
             <data-grid
                 :data-source="vacancyCandidates"
                 :columns="columns"
-                :action-column-width="45"
-                :action-column-text="''"
+                :action-column="false"
+                :selection-mode="true"
+                :search-visible="false"
+                :remote-operations="false"
+                @selectedItem="checkedItems"
+                :instance="'dataGridTable'"
+                ref="dataGrid"
             >
-                <div slot="actionSlot" slot-scope="list">
-                    <dropdown>
-                        <dropdown-button :arrow="false" style="width: 30px; height: 30px; padding: 0; justify-content: center">
-                            <i class="icon-ellipsis-v"></i>
-                        </dropdown-button>
-                        <dropdown-items>
-                            <dropdown-item :style="dropdownItemStyle" @click="changeCompatibilityPopup(list.row)">
-                                <i class="icon-repeat"></i>
-                                {{ translate('button.ChangeCompatibility') }}
-                            </dropdown-item>
-                            <dropdown-item :style="dropdownItemStyle" @click="changeStatusPopup(list.row)">
-                                <i class="icon-repeat"></i>
-                                {{ translate('button.ChangeStatus') }}
-                            </dropdown-item>
-                        </dropdown-items>
-                    </dropdown>
+                <div slot-scope="list" slot="fullnameTemplate">
+                    <router-link class="text-blue-700 underline" :to="{name: 'candidate.profile', params: {id: list.row.candidate.id}}">{{ list.row.candidate.fullname }}</router-link>
                 </div>
             </data-grid>
         </page-body>
+
+        <div class="mt-5" v-if="selectedItems.length">
+            <dropdown>
+                <dropdown-button>
+                    {{ translate(translateKey + '.Label.Action') }}
+                </dropdown-button>
+                <dropdown-items position="left">
+                    <dropdown-item :style="dropdownItemStyle" @click="changeCompatibilityPopup()">
+                        <i class="icon-repeat"></i>
+                        {{ translate('button.ChangeCompatibility') }}
+                    </dropdown-item>
+                    <dropdown-item :style="dropdownItemStyle" @click="changeStatusPopup()">
+                        <i class="icon-repeat"></i>
+                        {{ translate('button.ChangeStatus') }}
+                    </dropdown-item>
+                    <dropdown-item :style="dropdownItemStyle" @click="sendEmailPopup()">
+                        <i class="icon-envelope-o"></i>
+                        {{ translate('button.SendEmail') }}
+                    </dropdown-item>
+                    <dropdown-item :style="dropdownItemStyle" @click="sendMessagePopup()">
+                        <i class="icon-chat"></i>
+                        {{ translate('button.SendMessage') }}
+                    </dropdown-item>
+                </dropdown-items>
+            </dropdown>
+        </div>
 
         <div class="mt-5">
             <candidate-filter/>
@@ -40,7 +57,7 @@
         <!-- Change Compatibility Popup -->
         <modal id="CandidateCompatibilityChangePopup" size="xs" modal-box-style="overflow: initial">
             <modal-head>
-                <modal-title>{{ changeCompatibilityForm.title }}</modal-title>
+                <modal-title>{{ translate(translateKey + '.Label.ChangeCompatibility') }}</modal-title>
             </modal-head>
             <modal-body style="overflow: initial">
                 <form @submit.prevent="changeCompatibility">
@@ -60,13 +77,57 @@
         <!-- Change Status Popup -->
         <modal id="CandidateStatusChangePopup" size="xs" modal-box-style="overflow: initial">
             <modal-head>
-                <modal-title>{{ changeStatusForm.title }}</modal-title>
+                <modal-title>{{ translate(translateKey + '.Label.ChangeStatus') }}</modal-title>
             </modal-head>
             <modal-body style="overflow: initial">
                 <form @submit.prevent="changeStatus">
                     <grid>
                         <form-group :label="translateKey + '.Label.Status'" name="apply_status_id">
                             <form-tree-select :clearable="false" :options="applyStatuses" v-model="changeStatusForm.apply_status_id"/>
+                        </form-group>
+
+                        <app-button property="success" class="justify-center" type="submit">
+                            {{ translate('button.Save') }}
+                        </app-button>
+                    </grid>
+                </form>
+            </modal-body>
+        </modal>
+
+        <!-- Send Email -->
+        <modal id="SendEmailPopup" size="xs" modal-box-style="overflow: initial">
+            <modal-head>
+                <modal-title>{{ translate(translateKey + '.Label.SendEmailForm') }}</modal-title>
+            </modal-head>
+            <modal-body style="overflow: initial">
+                <form @submit.prevent="sendEmail">
+                    <grid>
+                        <form-group :label="translateKey + '.Label.Subject'" name="subject">
+                            <form-text v-model="sendEmailForm.subject"/>
+                        </form-group>
+
+                        <form-group :label="translateKey + '.Label.Message'" name="message">
+                            <form-text-area style="min-height: 120px" v-model="sendEmailForm.message"/>
+                        </form-group>
+
+                        <app-button property="success" class="justify-center" type="submit">
+                            {{ translate('button.Save') }}
+                        </app-button>
+                    </grid>
+                </form>
+            </modal-body>
+        </modal>
+
+        <!-- Send Message -->
+        <modal id="SendMessagePopup" size="xs" modal-box-style="overflow: initial">
+            <modal-head>
+                <modal-title>{{ translate(translateKey + '.Label.SendMessageForm') }}</modal-title>
+            </modal-head>
+            <modal-body style="overflow: initial">
+                <form @submit.prevent="sendMessage">
+                    <grid>
+                        <form-group :label="translateKey + '.Label.Message'" name="message">
+                            <form-text-area style="min-height: 120px" v-model="sendMessageForm.message"/>
                         </form-group>
 
                         <app-button property="success" class="justify-center" type="submit">
@@ -89,17 +150,30 @@ const translateKey = 'crm.VacancyCandidate';
 
 const changeCompatibilityForm = (item = {}) => {
     return {
-        title: item.title || null,
-        id: item.id || null,
+        ids: item.ids || null,
         vacancy_compatibility_id: item.vacancy_compatibility_id || null
     }
 }
 
 const changeStatusForm = (item = {}) => {
     return {
-        title: item.title || null,
-        id: item.id || null,
+        ids: item.ids || null,
         apply_status_id: item.apply_status_id || null
+    }
+}
+
+const sendEmailForm = (item = {}) => {
+    return {
+        ids: item.ids || null,
+        subject: null,
+        message: null
+    }
+}
+
+const sendMessageForm = (item = {}) => {
+    return {
+        ids: item.ids || null,
+        message: null
     }
 }
 
@@ -108,11 +182,14 @@ export default {
     data() {
         return {
             translateKey,
+            selectedItems: [],
+            dataGridInstance: {},
             columns: [
                 {
                     caption: translateKey + '.Label.Fullname',
-                    dataField: 'candidate.fullname',
-                    show: true
+                    dataField: 'fullname',
+                    show: true,
+                    slot: 'fullnameTemplate'
                 },
                 {
                     caption: translateKey + '.Label.Status',
@@ -143,16 +220,21 @@ export default {
             ],
             dropdownItemStyle: 'justify-content: flex-start; text-align: left; align-items: center',
             changeCompatibilityForm: changeCompatibilityForm(),
-            changeStatusForm: changeStatusForm()
+            changeStatusForm: changeStatusForm(),
+            sendEmailForm: sendEmailForm(),
+            sendMessageForm: sendMessageForm(),
         }
     },
     computed: {
         ...mapState('VacancyStore', ['vacancyCandidates', 'vacancy']),
         ...mapState('VacancyCompatibilityStore', ['vacancyCompatibilities']),
         ...mapState('ApplyStatusStore', ['applyStatuses']),
+        dxInstance() {
+            return this.$refs.dataGrid.$refs.dataGrid.instance;
+        }
     },
     methods: {
-        ...mapActions('VacancyStore', ['getVacancyCandidates', 'getVacancy', 'setApplyCandidateCompatibility', 'setApplyCandidateStatus']),
+        ...mapActions('VacancyStore', ['getVacancyCandidates', 'getVacancy', 'setApplyCandidateCompatibility', 'setApplyCandidateStatus', 'sendApplyCandidateEmail', 'sendApplyCandidateMessage']),
         ...mapActions('VacancyCompatibilityStore', ['getSelectVacancyCompatibilities']),
         ...mapActions('ApplyStatusStore', ['getSelectApplyStatuses']),
         /*
@@ -178,23 +260,23 @@ export default {
         /*
          * Change Compatibility Popup
          * */
-        changeCompatibilityPopup(item) {
+        changeCompatibilityPopup() {
             this.modal('CandidateCompatibilityChangePopup');
             this.getSelectVacancyCompatibilities();
+            console.log(this.selectedItems);
             this.changeCompatibilityForm = changeCompatibilityForm({
-                id: item.id,
-                vacancy_compatibility_id: item.vacancy_compatibility.id,
-                title: item.candidate.fullname
+                ids: this.selectedItems,
+                vacancy_compatibility_id: null,
             });
         },
         /*
          * Change Compatibility
          * */
         changeCompatibility() {
-            delete this.changeCompatibilityForm.title;
             this.setApplyCandidateCompatibility(this.changeCompatibilityForm)
             .then(r => {
                 if (r) {
+                    this.dxInstance.clearSelection();
                     this.modal('CandidateCompatibilityChangePopup');
                     this.getById();
                 }
@@ -203,32 +285,83 @@ export default {
         /*
          * Change Status Popup
          * */
-        changeStatusPopup(item) {
+        changeStatusPopup() {
             this.modal('CandidateStatusChangePopup');
             this.getSelectApplyStatuses();
             this.changeStatusForm = changeStatusForm({
-                id: item.id,
-                apply_status_id: item.apply_status.id,
-                title: item.candidate.fullname
+                ids: this.selectedItems,
+                apply_status_id: null,
             });
         },
         /*
          * Change Status
          * */
         changeStatus() {
-            delete this.changeStatusForm.title;
             this.setApplyCandidateStatus(this.changeStatusForm)
             .then(r => {
                 if (r) {
+                    this.dxInstance.clearSelection();
                     this.modal('CandidateStatusChangePopup');
                     this.getById();
                 }
             })
         },
+        /*
+         * Send Email Popup
+         * */
+        sendEmailPopup() {
+            this.modal('SendEmailPopup');
+            this.sendEmailForm = sendEmailForm({
+                ids: this.selectedItems
+            });
+        },
+        /*
+         * Send Email
+         * */
+        sendEmail() {
+            this.sendApplyCandidateEmail(this.sendEmailForm)
+            .then(r => {
+                if (r) {
+                    this.dxInstance.clearSelection();
+                    this.modal('SendEmailPopup');
+                    this.getById();
+                    this.notification(this.translate('notification.CandidateSendEmailSuccess.Description'))
+                }
+            })
+        },
+        /*
+         * Send Message Popup
+         * */
+        sendMessagePopup() {
+            this.modal('SendMessagePopup');
+            this.sendMessageForm = sendMessageForm({
+                ids: this.selectedItems
+            });
+        },
+        /*
+         * Send Message
+         * */
+        sendMessage() {
+            this.sendApplyCandidateMessage(this.sendMessageForm)
+            .then(r => {
+                if (r) {
+                    this.dxInstance.clearSelection();
+                    this.modal('SendMessagePopup');
+                    this.getById();
+                    this.notification(this.translate('notification.CandidateSendMessageSuccess.Description'))
+                }
+            })
+        },
+        /*
+         * Checked Items
+         * */
+        checkedItems(item) {
+            this.selectedItems = item.map(i => i.id);
+        },
     },
     created() {
         this.getById();
-    }
+    },
 }
 </script>
 

@@ -37,5 +37,5 @@
 }
 
 .router-tab__container {
-    @apply -calc-h-full-20 p-8 overflow-y-auto block w-full
+    @apply -calc-h-full-20 p-8 overflow-hidden block w-full
 }

@@ -47,6 +47,26 @@ export const routers = [
         ]
     },
     {
+        path: '/candidate',
+        name: 'candidate',
+        title: 'crm.Sidebar.Candidates',
+        icon: 'icon-users',
+        permission: 'candidate.read',
+        sidebar: true,
+        component: () => import('../views/candidate/CandidateIndex'),
+        children: [
+            {
+                path: '/candidate/:id/profile',
+                name: 'candidate.profile',
+                title: 'crm.Sidebar.CandidateProfile',
+                icon: 'icon-users',
+                permission: 'candidate.read',
+                sidebar: false,
+                component: () => import('../views/candidate/CandidateProfile'),
+            }
+        ]
+    },
+    {
         path: '*',
         title: 'crm.Sidebar.Interrogators',
         icon: 'icon-package1',

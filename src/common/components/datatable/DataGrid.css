@@ -19,6 +19,3 @@
 tr td:last-child .dx-template-wrapper {
     @apply space-x-1
 }
-.dx-datagrid-rowsview .dx-datagrid-content:not(.dx-datagrid-content-fixed) {
-    overflow: hidden;
-}

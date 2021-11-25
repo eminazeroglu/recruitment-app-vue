@@ -53,13 +53,12 @@ const UtilDataGridAndDataTree = {
             type: Boolean,
         },
         selectionMode: {
-            default: null
+            default: false
         },
-        selectedRowKeys:
-            {
-                default: null,
-                type: Array
-            },
+        selectedRowKeys: {
+            default: null,
+            type: Array
+        },
         actionColumn: {
             default: true,
             type: Boolean

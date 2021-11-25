@@ -1,4 +1,4 @@
 .header {
-    @apply bg-green-500 px-5 h-14 flex justify-end items-center
+    @apply bg-gray-800 px-5 h-14 flex justify-end items-center
 }
 

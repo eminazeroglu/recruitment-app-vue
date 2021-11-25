@@ -29,14 +29,8 @@
         @row-prepared="rowPrepared"
         @row-click="rowClick"
         @selection-changed="selectionChanged"
+        :showScrollbar="'never'"
     >
-        <DxButton
-            id="gridDeleteSelected"
-            :height="34"
-            :disabled="!selectedItemKeys.length"
-            text="Delete Selected Records"
-            @click="deleteRecords"
-        />
         <DxFilterRow :visible="searchVisible"/>
         <DxHeaderFilter :visible="headerFilter"/>
         <DxColumnFixing :enabled="columnFixing"/>
@@ -54,10 +48,13 @@
         />
 
         <DxPaging :enabled="allowPaging" :page-size="page.limit"/>
+
         <DxSelection
-            :mode="selectionMode"
+            v-if="selectionMode"
+            mode="multiple"
             :show-check-boxes-mode="'always'"
         />
+
         <DxPager
             :show-page-size-selector="true"
             :allowed-page-sizes="page.size"
@@ -88,9 +85,8 @@
         </DxColumn>
 
         <template #[itemTemplate(item)]="{data}" v-for="(item, itemIndex) in columns">
-            <slot :name="item.slot" :row="data.data"></slot>
+            <slot :name="item.slot" :row="rowMap(data)"></slot>
         </template>
-
 
         <DxColumn
             v-if="actionColumn"
@@ -105,7 +101,7 @@
             cell-template="ActionTemplate"
         />
         <template #ActionTemplate="{data}">
-            <slot name="actionSlot" :row="data.data"></slot>
+            <slot name="actionSlot" :row="rowMap(data)"></slot>
         </template>
 
         <DxSummary v-if="totalColumns.length">
@@ -193,20 +189,20 @@ export default {
         if (self.pageSize)
             self.page.size = self.pageSize;
     },
+    mounted() {
+        this.$emit('getInstance', this.dxInstance)
+    },
     methods: {
         ...UtilDataGridAndDataTree.methods,
-        onRowPrepared(data) {
-            console.log(data);
-        },
-        deleteRecords: () => {
-            this.selectedItemKeys.forEach((key) => {
-                this.dataSource.store().remove(key);
-            });
-            this.selectedItemKeys = [];
-            this.dataSource.reload();
+        rowMap(data) {
+            return {
+                ...data.data,
+                index: data.rowIndex,
+                totalCount: this.dxInstance.totalCount()
+            }
         },
         selectionChanged(data) {
-            this.selectedItemKeys = data.selectedRowKeys;
+            this.$emit('selectedItem', data.selectedRowKeys)
         },
         onReorder(e) {
             const visibleRows = e.component.getVisibleRows();
@@ -218,6 +214,8 @@ export default {
             newDataSource.splice(toIndex, 0, e.itemData);
 
             this.dataSource = newDataSource;
+
+            this.$emit('changeOrdering', newDataSource)
         },
     }
 }
