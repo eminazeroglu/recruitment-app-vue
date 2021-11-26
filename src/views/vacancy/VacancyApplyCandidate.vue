@@ -19,7 +19,9 @@
                 ref="dataGrid"
             >
                 <div slot-scope="list" slot="fullnameTemplate">
-                    <router-link class="text-blue-700 underline" :to="{name: 'candidate.profile', params: {id: list.row.candidate.id}}">{{ list.row.candidate.fullname }}</router-link>
+                    <router-link class="text-blue-700 underline" :to="{name: 'candidate.profile', params: {id: list.row.candidate.id}}">
+                        {{ list.row.candidate.fullname }}
+                    </router-link>
                 </div>
             </data-grid>
         </page-body>
@@ -51,7 +53,7 @@
         </div>
 
         <div class="mt-5">
-            <candidate-filter/>
+            <CandidateFilter/>
         </div>
 
         <!-- Change Compatibility Popup -->
@@ -95,48 +97,10 @@
         </modal>
 
         <!-- Send Email -->
-        <modal id="SendEmailPopup" size="xs" modal-box-style="overflow: initial">
-            <modal-head>
-                <modal-title>{{ translate(translateKey + '.Label.SendEmailForm') }}</modal-title>
-            </modal-head>
-            <modal-body style="overflow: initial">
-                <form @submit.prevent="sendEmail">
-                    <grid>
-                        <form-group :label="translateKey + '.Label.Subject'" name="subject">
-                            <form-text v-model="sendEmailForm.subject"/>
-                        </form-group>
-
-                        <form-group :label="translateKey + '.Label.Message'" name="message">
-                            <form-text-area style="min-height: 120px" v-model="sendEmailForm.message"/>
-                        </form-group>
-
-                        <app-button property="success" class="justify-center" type="submit">
-                            {{ translate('button.Save') }}
-                        </app-button>
-                    </grid>
-                </form>
-            </modal-body>
-        </modal>
+        <CandidateSendEmail @success="successSendModal"/>
 
         <!-- Send Message -->
-        <modal id="SendMessagePopup" size="xs" modal-box-style="overflow: initial">
-            <modal-head>
-                <modal-title>{{ translate(translateKey + '.Label.SendMessageForm') }}</modal-title>
-            </modal-head>
-            <modal-body style="overflow: initial">
-                <form @submit.prevent="sendMessage">
-                    <grid>
-                        <form-group :label="translateKey + '.Label.Message'" name="message">
-                            <form-text-area style="min-height: 120px" v-model="sendMessageForm.message"/>
-                        </form-group>
-
-                        <app-button property="success" class="justify-center" type="submit">
-                            {{ translate('button.Save') }}
-                        </app-button>
-                    </grid>
-                </form>
-            </modal-body>
-        </modal>
+        <CandidateSendMessage @success="successSendModal"/>
     </page>
 </template>
 
@@ -145,6 +109,9 @@
  * Import Components
  * */
 import {mapActions, mapState} from 'vuex';
+import CandidateFilter from "../../common/components/candidate/CandidateFilter";
+import CandidateSendEmail from "../../common/components/candidate/CandidateSendEmail";
+import CandidateSendMessage from "../../common/components/candidate/CandidateSendMessage";
 
 const translateKey = 'crm.VacancyCandidate';
 
@@ -162,14 +129,6 @@ const changeStatusForm = (item = {}) => {
     }
 }
 
-const sendEmailForm = (item = {}) => {
-    return {
-        ids: item.ids || null,
-        subject: null,
-        message: null
-    }
-}
-
 const sendMessageForm = (item = {}) => {
     return {
         ids: item.ids || null,
@@ -179,6 +138,7 @@ const sendMessageForm = (item = {}) => {
 
 export default {
     name: "VacancyApplyCandidate",
+    components: {CandidateSendMessage, CandidateSendEmail, CandidateFilter},
     data() {
         return {
             translateKey,
@@ -221,7 +181,6 @@ export default {
             dropdownItemStyle: 'justify-content: flex-start; text-align: left; align-items: center',
             changeCompatibilityForm: changeCompatibilityForm(),
             changeStatusForm: changeStatusForm(),
-            sendEmailForm: sendEmailForm(),
             sendMessageForm: sendMessageForm(),
         }
     },
@@ -310,47 +269,20 @@ export default {
          * Send Email Popup
          * */
         sendEmailPopup() {
-            this.modal('SendEmailPopup');
-            this.sendEmailForm = sendEmailForm({
-                ids: this.selectedItems
-            });
-        },
-        /*
-         * Send Email
-         * */
-        sendEmail() {
-            this.sendApplyCandidateEmail(this.sendEmailForm)
-            .then(r => {
-                if (r) {
-                    this.dxInstance.clearSelection();
-                    this.modal('SendEmailPopup');
-                    this.getById();
-                    this.notification(this.translate('notification.CandidateSendEmailSuccess.Description'))
-                }
-            })
+            this.$eventBus.$emit('CandidateSendEmail', this.selectedItems);
         },
         /*
          * Send Message Popup
          * */
         sendMessagePopup() {
-            this.modal('SendMessagePopup');
-            this.sendMessageForm = sendMessageForm({
-                ids: this.selectedItems
-            });
+            this.$eventBus.$emit('CandidateSendMessage', this.selectedItems);
         },
         /*
-         * Send Message
+         * Success Send Email
          * */
-        sendMessage() {
-            this.sendApplyCandidateMessage(this.sendMessageForm)
-            .then(r => {
-                if (r) {
-                    this.dxInstance.clearSelection();
-                    this.modal('SendMessagePopup');
-                    this.getById();
-                    this.notification(this.translate('notification.CandidateSendMessageSuccess.Description'))
-                }
-            })
+        successSendModal() {
+            this.getById();
+            this.dxInstance.clearSelection();
         },
         /*
          * Checked Items

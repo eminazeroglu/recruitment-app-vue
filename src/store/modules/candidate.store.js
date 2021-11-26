@@ -83,6 +83,18 @@ const CandidateStore = {
          * */
         deleteCandidate({commit}, payload) {
             return candidateService.delete(payload);
+        },
+        /*
+         * Send Candidate Email
+         * */
+        sendCandidateEmail({commit}, payload) {
+            return candidateService.post('send-email', payload);
+        },
+        /*
+         * Send Candidate Message
+         * */
+        sendCandidateMessage({commit}, payload) {
+            return candidateService.post('send-message', payload);
         }
     },
 

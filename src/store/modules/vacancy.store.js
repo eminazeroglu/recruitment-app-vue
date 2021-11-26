@@ -132,18 +132,6 @@ const VacancyStore = {
         setApplyCandidateStatus({commit}, payload) {
             return vacancyService.post('candidate/status', payload);
         },
-        /*
-         * Send Apply Candidate Email
-         * */
-        sendApplyCandidateEmail({commit}, payload) {
-            return vacancyService.post('candidate/send-email', payload);
-        },
-        /*
-         * Send Apply Candidate Message
-         * */
-        sendApplyCandidateMessage({commit}, payload) {
-            return vacancyService.post('candidate/send-message', payload);
-        }
     },
 
     /* Getters */

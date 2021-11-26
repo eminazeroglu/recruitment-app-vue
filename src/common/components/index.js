@@ -18,7 +18,6 @@ import DropdownItem from "./dropdown/DropdownItem";
 import StatsBox from "./stats-box/StatsBox";
 import Accordion from "./accordion/Accordion";
 import AccordionItem from "./accordion/AccordionItem";
-import CandidateFilter from "./candidate-filter/CandidateFilter";
 import TreeList from "./treelist/TreeList";
 
 export default {
@@ -43,5 +42,4 @@ export default {
     Accordion,
     AccordionItem,
     TreeList,
-    CandidateFilter
 }

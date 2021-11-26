@@ -83,15 +83,6 @@ export const routers = [
                 component: () => import('../views/interrogator/family-status/FamilyStatusIndex'),
             },
             {
-                path: '/driving-license',
-                name: 'driving-license',
-                title: 'crm.Sidebar.DrivingLicenses',
-                icon: 'icon-circle-o',
-                permission: 'driving_license.read',
-                sidebar: true,
-                component: () => import('../views/interrogator/driving-license/DrivingLicenseIndex'),
-            },
-            {
                 path: '/city',
                 name: 'city',
                 title: 'crm.Sidebar.Cities',
@@ -189,15 +180,6 @@ export const routers = [
                 permission: 'department.read',
                 sidebar: true,
                 component: () => import('../views/interrogator/department/DepartmentIndex'),
-            },
-            {
-                path: '/candidate-level',
-                name: 'candidate-level',
-                title: 'crm.Sidebar.CandidateLevels',
-                icon: 'icon-circle-o',
-                permission: 'candidate_level.read',
-                sidebar: true,
-                component: () => import('../views/interrogator/candidate-level/CandidateLevelIndex'),
             },
             {
                 path: '/apply-status',
