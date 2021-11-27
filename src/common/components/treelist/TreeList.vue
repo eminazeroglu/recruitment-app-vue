@@ -32,6 +32,7 @@
         @selection-changed="selectionChanged"
         @row-prepared="rowPrepared"
         @row-click="rowClick"
+        :scrolling="{useNative: nativeScroll}"
     >
         <DxButton
             id="gridDeleteSelected"
@@ -211,7 +212,3 @@ export default {
     }
 }
 </script>
-
-<style scoped>
-    @import "TreeList.css";
-</style>

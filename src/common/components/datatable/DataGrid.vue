@@ -28,8 +28,9 @@
         :key-expr="keyExpr"
         @row-prepared="rowPrepared"
         @row-click="rowClick"
+        :allowSelectAll="false"
         @selection-changed="selectionChanged"
-        :showScrollbar="'never'"
+        :scrolling="{useNative: nativeScroll}"
     >
         <DxFilterRow :visible="searchVisible"/>
         <DxHeaderFilter :visible="headerFilter"/>
@@ -52,6 +53,7 @@
         <DxSelection
             v-if="selectionMode"
             mode="multiple"
+            :select-all-mode="'page'"
             :show-check-boxes-mode="'always'"
         />
 
@@ -220,7 +222,3 @@ export default {
     }
 }
 </script>
-
-<style scoped>
-    @import "DataGrid.css";
-</style>

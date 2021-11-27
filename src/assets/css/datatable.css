@@ -7,15 +7,25 @@
     @apply font-medium text-black
 }
 
-.dx-datagrid-rowsview .dx-row > td, .dx-datagrid-rowsview .dx-row > tr > td {
+.dx-datagrid-rowsview .dx-row > td, .dx-datagrid-rowsview .dx-row > tr > td,
+.dx-treelist-rowsview .dx-row > td, .dx-treelist-rowsview .dx-row > tr > td
+{
     @apply w-auto min-w-0 max-w-48
 }
-.dx-datagrid-rowsview .dx-row > td.action-td, .dx-datagrid-rowsview .dx-row > tr > td.action-td {
-    overflow: initial;
+.dx-datagrid-rowsview .dx-row > td.action-td, .dx-datagrid-rowsview .dx-row > tr > td.action-td,
+.dx-treelist-rowsview .dx-row > td.action-td, .dx-treelist-rowsview .dx-row > tr > td.action-td
+{
+    overflow: initial !important;
 }
-.dx-treelist-text-content {
+.dx-treelist-text-content,
+.dx-datagrid-text-content
+{
     @apply relative top-1;
 }
 tr td:last-child .dx-template-wrapper {
     @apply space-x-1
+}
+.dx-scrollable-container {
+    touch-action: initial !important;
+    overflow: initial !important;
 }

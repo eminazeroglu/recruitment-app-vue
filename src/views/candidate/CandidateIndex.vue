@@ -1,73 +1,68 @@
 <template>
     <page>
         <page-head>
-            <app-button property="success" icon="icon-add" @click="createModal">
-                {{ translate('button.Add') }}
-            </app-button>
+            <div class="flex items-center space-x-3">
+                <dropdown v-if="selectedItems.length">
+                    <dropdown-button>
+                        {{ translate(translateKey + '.Label.Action') }}
+                    </dropdown-button>
+                    <dropdown-items position="left" class="top-full">
+                        <dropdown-item :style="dropdownItemStyle" v-for="i in dropdownMenus" @click="dropdownAction(i.action)">
+                            <i :class="i.icon"></i>
+                            {{ i.name }}
+                        </dropdown-item>
+                    </dropdown-items>
+                </dropdown>
+
+                <app-button property="warning" icon="icon-search" @click="filterModal">
+                    {{ translate('button.Filter') }}
+                </app-button>
+            </div>
         </page-head>
 
         <page-body>
             <data-grid
                 :data-source="candidates"
                 :columns="columns"
-                :action-column-width="120"
-                :action-column-text="translate(translateKey + '.Label.Action')"
+                :action-column="false"
+                :search-visible="false"
+                :selection-mode="true"
+                @selectedItem="checkedItems"
+                ref="dataGrid"
             >
-                <div slot="actionSlot" slot-scope="list">
-                    <app-button
-                        v-if="can(permission + '.update')"
-                        @click="createModal(list.row.form)"
-                        :sm="true"
-                        :title="translate('button.Edit')"
-                        icon="icon-edit-2"
-                        property="primary"
-                    />
-
-                    <app-button
-                        v-if="can(permission + '.action')"
-                        :sm="true"
-                        @click="action(list.row, 'active')"
-                        :title="list.row.action.active ? translate('button.DeActivate') : translate('button.Activate')"
-                        :icon="!list.row.action.active ? 'icon-eye-off' : 'icon-eye'"
-                        property="success"
-                    />
-
-                    <app-button
-                        v-if="can(permission + '.delete')"
-                        :sm="true"
-                        @click="remove(list.row.id)"
-                        :title="translate('button.Delete')"
-                        icon="icon-trash-2"
-                        property="danger"
-                    />
-
+                <div slot="photoTemplate" slot-scope="list">
+                    <img :src="list.row.photo" class="w-10 h-10 object-cover rounded-full" alt="">
+                </div>
+                <div slot-scope="list" slot="fullnameTemplate">
+                    <router-link class="text-blue-700 underline" :to="{name: 'candidate.profile', params: {id: list.row.id}}">
+                        {{ list.row.fullname }}
+                    </router-link>
                 </div>
             </data-grid>
+
+            <div class="mt-5" v-if="selectedItems.length">
+                <dropdown>
+                    <dropdown-button>
+                        {{ translate(translateKey + '.Label.Action') }}
+                    </dropdown-button>
+                    <dropdown-items position="left" class="bottom-full">
+                        <dropdown-item :style="dropdownItemStyle" v-for="i in dropdownMenus" @click="dropdownAction(i.action)">
+                            <i :class="i.icon"></i>
+                            {{ i.name }}
+                        </dropdown-item>
+                    </dropdown-items>
+                </dropdown>
+            </div>
         </page-body>
 
-        <modal :id="modalId" size="xs">
-            <modal-head>
-                <modal-title>{{ currentPage.title }}</modal-title>
-            </modal-head>
-            <modal-body v-if="modelShow">
-                <form @submit.prevent="save">
-                    <grid>
-                        <form-group
-                            :label="translate(translateKey + '.Label.Name') + (appLanguages.length > 1 ? ' ('+lang.name+')' : '')"
-                            :name="'translates.'+lang.code+'.name'"
-                            v-for="(lang, index) in appLanguages"
-                            :key="index"
-                        >
-                            <form-text v-model="form.translates[lang.code].name"/>
-                        </form-group>
+        <!-- Filter -->
+        <CandidateFilter/>
 
-                        <app-button class="justify-center" property="success" type="submit">
-                            {{ translate('button.Save') }}
-                        </app-button>
-                    </grid>
-                </form>
-            </modal-body>
-        </modal>
+        <!-- Send Email -->
+        <CandidateSendEmail @success="successSendModal"/>
+
+        <!-- Send Message -->
+        <CandidateSendMessage @success="successSendModal"/>
     </page>
 </template>
 
@@ -76,85 +71,153 @@
  * Import Components
  * */
 import {mapActions, mapState} from 'vuex';
+import CandidateSendEmail from "../../common/components/candidate/CandidateSendEmail";
+import CandidateSendMessage from "../../common/components/candidate/CandidateSendMessage";
+import CandidateFilter from "../../common/components/candidate/CandidateFilter";
 
 const modalId = 'createModal';
 const translateKey = 'crm.Candidate';
 
 export default {
     name: "CandidateIndex",
+    components: {CandidateFilter, CandidateSendMessage, CandidateSendEmail},
     data() {
         return {
             translateKey,
             modalId,
             modelShow: false,
+            dropdownItemStyle: 'justify-content: flex-start; text-align: left; align-items: center',
             columns: [
                 {
-                    caption: translateKey + '.Label.Name',
-                    dataField: 'name',
-                    show: true
+                    caption: translateKey + '.Label.Photo',
+                    dataField: 'photo',
+                    show: true,
+                    width: 58,
+                    alignment: 'center',
+                    slot: 'photoTemplate'
+                },
+                {
+                    caption: translateKey + '.Label.Fullname',
+                    dataField: 'fullname',
+                    show: true,
+                    slot: 'fullnameTemplate'
+                },
+                {
+                    caption: translateKey + '.Label.Phone',
+                    dataField: 'phone',
+                    show: true,
+                    alignment: 'center',
+                    width: 200
+                },
+                {
+                    caption: translateKey + '.Label.Birthday',
+                    dataField: 'date_of_birth',
+                    show: true,
+                    alignment: 'center',
+                    width: 130
+                },
+                {
+                    caption: translateKey + '.Label.Age',
+                    dataField: 'age',
+                    show: true,
+                    alignment: 'center',
+                    width: 60
+                },
+                {
+                    caption: translateKey + '.Label.Gender',
+                    dataField: 'gender',
+                    show: true,
+                    alignment: 'center',
+                    width: 100
+                },
+                {
+                    caption: translateKey + '.Label.Profession',
+                    dataField: 'profession.name',
+                    show: true,
+                    alignment: 'center',
+                    width: 180
+                },
+                {
+                    caption: translateKey + '.Label.City',
+                    dataField: 'city.name',
+                    show: true,
+                    alignment: 'center',
+                    width: 180
+                },
+                {
+                    caption: translateKey + '.Label.Nationality',
+                    dataField: 'nationality.name',
+                    show: true,
+                    alignment: 'center',
+                    width: 180
                 },
             ],
-            form: {}
+            selectedItems: [],
         }
     },
     computed: {
         ...mapState('CandidateStore', ['candidates']),
         permission() {
             return this.currentPage.permission;
+        },
+        dxInstance() {
+            return this.$refs.dataGrid.$refs.dataGrid.instance;
+        },
+        dropdownMenus() {
+            return [
+                {
+                    action: 'email',
+                    icon: 'icon-envelope-o',
+                    name: this.translate('button.SendEmail')
+                },
+                {
+                    action: 'message',
+                    icon: 'icon-chat',
+                    name: this.translate('button.SendMessage')
+                }
+            ];
         }
     },
     methods: {
         ...mapActions('CandidateStore', ['getCandidates', 'setCandidate', 'actionCandidate', 'deleteCandidate']),
         /*
-         * Form Create
+         * Send Email Popup
          * */
-        formCreate(item = {}) {
-            const form = {
-                id: item.id || null,
-                translates: {}
-            }
-            this.appLanguages.filter(i => {
-                form.translates[i.code] = {
-                    name: item.translates && item.translates[i.code] ? item.translates[i.code].name : null,
-                }
-            });
-            this.form = form;
-            this.modelShow = true;
+        sendEmailPopup() {
+            this.$eventBus.$emit('CandidateSendEmail', this.selectedItems);
         },
         /*
-         * Create Modal
+         * Send Message Popup
          * */
-        createModal(item = {}) {
-            this.modal(this.modalId)
-            this.modelShow = false;
-            this.resetError();
-            this.formCreate(item);
+        sendMessagePopup() {
+            this.$eventBus.$emit('CandidateSendMessage', this.selectedItems);
         },
         /*
-         * Remove
-         * */
-        remove(id) {
-            this.alert().then(r => this.deleteCandidate(id).then(r => this.getCandidates()))
+        * Dropdown Action
+        * */
+        dropdownAction(action) {
+              if (action === 'email') this.sendEmailPopup();
+              else if (action === 'message') this.sendMessagePopup();
         },
         /*
-         * Action
+         * Filter Modal
          * */
-        action(item, type) {
-            let action = item.action[type] ? 0 : 1;
-            this.actionCandidate({id: item.id, type, action}).then(r => this.getCandidates())
+        filterModal() {
+            this.modal('CandidateFilterModal')
         },
         /*
-         * Save
+         * Success Send Email
          * */
-        save() {
-            this.setCandidate(this.form)
-            .then(r => {
-                if (r) {
-                    this.modal(this.modalId);
-                    this.getCandidates();
-                }
-            })
-        }
+        successSendModal() {
+            this.getCandidates();
+            this.dxInstance.clearSelection();
+        },
+        /*
+         * Checked Items
+         * */
+        checkedItems(item) {
+            this.selectedItems = item.map(i => i.id);
+        },
     },
     created() {
         this.getCandidates();

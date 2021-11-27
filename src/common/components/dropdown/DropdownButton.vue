@@ -20,6 +20,9 @@ export default {
         },
         arrowClass: {
             default: null
+        },
+        scrollHas: {
+            default: false
         }
     },
     data() {
@@ -27,24 +30,27 @@ export default {
     },
     methods: {
         dropdown (event) {
-            const obj = event.target;
-            const items = obj.closest('.dropdown').querySelector('.dropdown-items');
-            let t;
-            let scrollTop = (((t = document.documentElement) || (t = document.body.parentNode)) &&
-            typeof t.scrollTop == 'number' ? t : document.body).scrollTop;
-            let topOffset = items.getBoundingClientRect().top;
-            let relativeOffset = topOffset - scrollTop;
-            let windowHeight = window.innerHeight;
+            if (this.scrollHas) {
+                const obj = event.target;
+                const items = obj.closest('.dropdown').querySelector('.dropdown-items');
+                let t;
+                let scrollTop = (((t = document.documentElement) || (t = document.body.parentNode)) &&
+                typeof t.scrollTop == 'number' ? t : document.body).scrollTop;
+                let topOffset = items.getBoundingClientRect().top;
+                let relativeOffset = topOffset - scrollTop;
+                let windowHeight = window.innerHeight;
 
-           /* Array.from(document.querySelectorAll('.dropdown-items')).forEach(i => {
-                i.classList.remove('bottom-full')
-            })
+                Array.from(document.querySelectorAll('.dropdown-items')).forEach(i => {
+                    i.classList.remove('bottom-full')
+                })
 
-            if (relativeOffset > windowHeight / 2) {
-                items.classList.add("bottom-full");
-            } else {
-                items.classList.remove("bottom-full");
-            }*/
+                if (relativeOffset > windowHeight / 2) {
+                    items.classList.add("bottom-full");
+                }
+                else {
+                    items.classList.remove("bottom-full");
+                }
+            }
         }
     },
     created() {

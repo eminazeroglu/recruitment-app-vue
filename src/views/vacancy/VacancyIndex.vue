@@ -23,23 +23,22 @@
                 :action-column-text="''"
             >
                 <div slot="statusSlot" slot-scope="list">
-                    <badge property="success" v-if="list.row.status.key === 'published'">{{
-                            list.row.status.name
-                                                                                         }}
+                    <badge property="success" v-if="list.row.status.key === 'published'">
+                        {{ list.row.status.name }}
                     </badge>
-                    <badge v-else-if="list.row.status.key === 'draft'">{{ list.row.status.name }}</badge>
-                    <badge property="dark" v-else-if="list.row.status.key === 'completed'">{{
-                            list.row.status.name
-                                                                                           }}
+                    <badge v-else-if="list.row.status.key === 'draft'">
+                        {{ list.row.status.name }}
                     </badge>
-                    <badge property="danger" v-else-if="list.row.status.key === 'canceled'">{{
-                            list.row.status.name
-                                                                                            }}
+                    <badge property="dark" v-else-if="list.row.status.key === 'completed'">
+                        {{ list.row.status.name }}
+                    </badge>
+                    <badge property="danger" v-else-if="list.row.status.key === 'canceled'">
+                        {{ list.row.status.name }}
                     </badge>
                 </div>
                 <div slot="actionSlot" slot-scope="list">
                     <dropdown v-if="can(permission + '.action')">
-                        <dropdown-button :arrow="false" style="padding: 0; width: 30px; height: 30px; justify-content: center">
+                        <dropdown-button :arrow="false" :scroll-has="true" style="padding: 0; width: 30px; height: 30px; justify-content: center">
                             <i class="icon-ellipsis-v"></i>
                         </dropdown-button>
                         <dropdown-items>

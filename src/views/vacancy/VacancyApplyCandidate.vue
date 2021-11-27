@@ -1,6 +1,6 @@
 <template>
     <page>
-        <page-head>
+        <page-head :title="vacancy.name || '&nbsp;'" :sub-title="currentPage.title">
             <app-button property="warning" icon="icon-search" @click="filterModal">
                 {{ translate('button.Filter') }}
             </app-button>
@@ -13,11 +13,12 @@
                 :action-column="false"
                 :selection-mode="true"
                 :search-visible="false"
-                :remote-operations="false"
                 @selectedItem="checkedItems"
-                :instance="'dataGridTable'"
                 ref="dataGrid"
             >
+                <div slot-scope="list" slot="photoTemplate">
+                    <img :src="list.row.candidate.photo" class="w-10 h-10 object-cover rounded-full" alt="">
+                </div>
                 <div slot-scope="list" slot="fullnameTemplate">
                     <router-link class="text-blue-700 underline" :to="{name: 'candidate.profile', params: {id: list.row.candidate.id}}">
                         {{ list.row.candidate.fullname }}
@@ -31,7 +32,7 @@
                 <dropdown-button>
                     {{ translate(translateKey + '.Label.Action') }}
                 </dropdown-button>
-                <dropdown-items position="left">
+                <dropdown-items position="left" class="bottom-full">
                     <dropdown-item :style="dropdownItemStyle" @click="changeCompatibilityPopup()">
                         <i class="icon-repeat"></i>
                         {{ translate('button.ChangeCompatibility') }}
@@ -129,13 +130,6 @@ const changeStatusForm = (item = {}) => {
     }
 }
 
-const sendMessageForm = (item = {}) => {
-    return {
-        ids: item.ids || null,
-        message: null
-    }
-}
-
 export default {
     name: "VacancyApplyCandidate",
     components: {CandidateSendMessage, CandidateSendEmail, CandidateFilter},
@@ -145,6 +139,14 @@ export default {
             selectedItems: [],
             dataGridInstance: {},
             columns: [
+                {
+                    caption: translateKey + '.Label.Photo',
+                    dataField: 'photo',
+                    show: true,
+                    slot: 'photoTemplate',
+                    alignment: 'center',
+                    width: 58
+                },
                 {
                     caption: translateKey + '.Label.Fullname',
                     dataField: 'fullname',
@@ -181,7 +183,6 @@ export default {
             dropdownItemStyle: 'justify-content: flex-start; text-align: left; align-items: center',
             changeCompatibilityForm: changeCompatibilityForm(),
             changeStatusForm: changeStatusForm(),
-            sendMessageForm: sendMessageForm(),
         }
     },
     computed: {
@@ -190,6 +191,9 @@ export default {
         ...mapState('ApplyStatusStore', ['applyStatuses']),
         dxInstance() {
             return this.$refs.dataGrid.$refs.dataGrid.instance;
+        },
+        dataSource() {
+            return this.dxInstance.getDataSource().items();
         }
     },
     methods: {
@@ -269,13 +273,21 @@ export default {
          * Send Email Popup
          * */
         sendEmailPopup() {
-            this.$eventBus.$emit('CandidateSendEmail', this.selectedItems);
+            let ids = this.selectedItems.map(i => {
+                let find = this.dataSource.find(d => parseFloat(d.id) === parseFloat(i));
+                return find.candidate.id;
+            });
+            this.$eventBus.$emit('CandidateSendEmail', ids);
         },
         /*
          * Send Message Popup
          * */
         sendMessagePopup() {
-            this.$eventBus.$emit('CandidateSendMessage', this.selectedItems);
+            let ids = this.selectedItems.map(i => {
+                let find = this.dataSource.find(d => parseFloat(d.id) === parseFloat(i));
+                return find.candidate.id;
+            });
+            this.$eventBus.$emit('CandidateSendMessage', ids);
         },
         /*
          * Success Send Email

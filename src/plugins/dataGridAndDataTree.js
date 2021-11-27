@@ -38,6 +38,9 @@ const UtilDataGridAndDataTree = {
         remoteOperations: {
             default: true,
         },
+        nativeScroll: {
+            default: true,
+        },
         showColumn: {
             default: true,
         },

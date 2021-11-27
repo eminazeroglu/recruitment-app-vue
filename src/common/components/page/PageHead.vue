@@ -1,8 +1,8 @@
 <template>
     <div class="flex justify-between items-center">
         <div class="flex flex-col space-y-1">
-            <h3 class="font-bold text-xl uppercase" :lang="'az'" v-if="pageTitle">{{ pageTitle }}</h3>
-            <p class="font-normal text-gray-500" v-if="pageSubTitle">{{ pageSubTitle }}</p>
+            <h3 class="font-bold text-xl uppercase" :lang="'az'" v-if="pageTitle" v-html="pageTitle"></h3>
+            <p class="font-normal text-gray-500" v-if="pageSubTitle" v-html="pageSubTitle"></p>
         </div>
         <div>
             <slot/>
