@@ -1,17 +1,13 @@
 <template>
-    <modal id="SendEmailPopup" size="xs" modal-box-style="overflow: initial">
+    <modal id="SendPoolPopup" size="xs" modal-box-style="overflow: initial">
         <modal-head>
-            <modal-title>{{ translate(translateKey + '.Label.SendEmailForm') }}</modal-title>
+            <modal-title>{{ translate(translateKey + '.Label.SendPoolForm') }}</modal-title>
         </modal-head>
         <modal-body style="overflow: initial">
             <form @submit.prevent="submit">
                 <grid>
-                    <form-group :label="translateKey + '.Label.Subject'" name="subject">
-                        <form-text v-model="form.subject"/>
-                    </form-group>
-
-                    <form-group :label="translateKey + '.Label.Message'" name="message">
-                        <form-text-area style="min-height: 120px" v-model="form.message"/>
+                    <form-group :label="translateKey + '.Label.Pool'" name="pool_id">
+                        <form-tree-select :options="selectPools" v-model="form.pool_id"/>
                     </form-group>
 
                     <app-button property="success" class="justify-center" type="submit">
@@ -34,13 +30,12 @@ const translateKey = 'crm.Candidate';
 const formObject = (item = null) => {
     return {
         ids: item,
-        subject: null,
-        message: null
+        pool_id: null,
     }
 }
 
 export default {
-    name: "CandidateSendEmail",
+    name: "CandidateSendPool",
     data() {
         return {
             translateKey,
@@ -48,22 +43,27 @@ export default {
         }
     },
     created() {
-        this.$eventBus.$off('CandidateSendEmail');
-        this.$eventBus.$on('CandidateSendEmail', item => {
+        this.$eventBus.$off('CandidateSendPool');
+        this.$eventBus.$on('CandidateSendPool', item => {
             this.setErrors([]);
-            this.modal('SendEmailPopup');
+            this.modal('SendPoolPopup');
+            this.getSelectPools();
             this.form = formObject(item);
         });
     },
+    computed: {
+        ...mapState('PoolStore', ['selectPools']),
+    },
     methods: {
         ...mapActions('AppStore', ['setErrors']),
-        ...mapActions('CandidateStore', ['sendCandidateEmail']),
+        ...mapActions('PoolStore', ['getSelectPools']),
+        ...mapActions('CandidateStore', ['sendCandidatePool']),
         submit() {
-            this.sendCandidateEmail(this.form)
+            this.sendCandidatePool(this.form)
             .then(r => {
                 if (r) {
-                    this.modal('SendEmailPopup');
-                    this.notification(this.translate('notification.CandidateSendEmailSuccess.Description'));
+                    this.modal('SendPoolPopup');
+                    this.notification(this.translate('notification.CandidateSendPoolSuccess.Description'));
                     this.$emit('success', true);
                 }
             })

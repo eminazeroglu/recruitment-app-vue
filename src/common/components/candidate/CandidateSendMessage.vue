@@ -11,7 +11,7 @@
                     </form-group>
 
                     <app-button property="success" class="justify-center" type="submit">
-                        {{ translate('button.Save') }}
+                        {{ translate('button.Send') }}
                     </app-button>
                 </grid>
             </form>

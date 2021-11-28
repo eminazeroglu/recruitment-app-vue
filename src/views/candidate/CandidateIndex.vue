@@ -1,6 +1,6 @@
 <template>
     <page>
-        <page-head>
+        <page-head :title="pageTitle" :sub-title="pageSubTitle">
             <div class="flex items-center space-x-3">
                 <dropdown v-if="selectedItems.length">
                     <dropdown-button>
@@ -14,6 +14,10 @@
                     </dropdown-items>
                 </dropdown>
 
+                <app-button property="gray" icon="icon-reload" @click="reload">
+                    {{ translate('button.Reload') }}
+                </app-button>
+
                 <app-button property="warning" icon="icon-search" @click="filterModal">
                     {{ translate('button.Filter') }}
                 </app-button>
@@ -22,7 +26,7 @@
 
         <page-body>
             <data-grid
-                :data-source="candidates"
+                :data-source="datasource"
                 :columns="columns"
                 :action-column="false"
                 :search-visible="false"
@@ -63,6 +67,9 @@
 
         <!-- Send Message -->
         <CandidateSendMessage @success="successSendModal"/>
+
+        <!-- Send Pool -->
+        <CandidateSendPool @success="successSendModal"/>
     </page>
 </template>
 
@@ -74,19 +81,19 @@ import {mapActions, mapState} from 'vuex';
 import CandidateSendEmail from "../../common/components/candidate/CandidateSendEmail";
 import CandidateSendMessage from "../../common/components/candidate/CandidateSendMessage";
 import CandidateFilter from "../../common/components/candidate/CandidateFilter";
+import CandidateSendPool from "../../common/components/candidate/CandidateSendPool";
 
-const modalId = 'createModal';
 const translateKey = 'crm.Candidate';
 
 export default {
     name: "CandidateIndex",
-    components: {CandidateFilter, CandidateSendMessage, CandidateSendEmail},
+    components: {CandidateSendPool, CandidateFilter, CandidateSendMessage, CandidateSendEmail},
     data() {
         return {
             translateKey,
-            modalId,
             modelShow: false,
             dropdownItemStyle: 'justify-content: flex-start; text-align: left; align-items: center',
+            datasource: [],
             columns: [
                 {
                     caption: translateKey + '.Label.Photo',
@@ -105,6 +112,13 @@ export default {
                 {
                     caption: translateKey + '.Label.Phone',
                     dataField: 'phone',
+                    show: true,
+                    alignment: 'center',
+                    width: 150
+                },
+                {
+                    caption: translateKey + '.Label.Email',
+                    dataField: 'email',
                     show: true,
                     alignment: 'center',
                     width: 200
@@ -157,14 +171,23 @@ export default {
     },
     computed: {
         ...mapState('CandidateStore', ['candidates']),
+        pageTitle() {
+            return this.currentPage.title;
+        },
+        pageSubTitle() {
+            return null;
+        },
         permission() {
             return this.currentPage.permission;
         },
         dxInstance() {
             return this.$refs.dataGrid.$refs.dataGrid.instance;
         },
+        componentType() {
+            return 'candidate';
+        },
         dropdownMenus() {
-            return [
+            const items = [
                 {
                     action: 'email',
                     icon: 'icon-envelope-o',
@@ -174,12 +197,33 @@ export default {
                     action: 'message',
                     icon: 'icon-chat',
                     name: this.translate('button.SendMessage')
+                },
+                {
+                    action: 'send_pool',
+                    icon: 'icon-folder',
+                    name: this.translate('button.SendPool')
                 }
             ];
+
+            if (this.componentType === 'pool_candidate') {
+                items.push({
+                    action: 'remove_pool',
+                    icon: 'icon-folder',
+                    name: this.translate('button.RemovePool')
+                })
+            }
+
+            return items;
         }
     },
     methods: {
         ...mapActions('CandidateStore', ['getCandidates', 'setCandidate', 'actionCandidate', 'deleteCandidate']),
+        /*
+         * Reload
+         * */
+        reload() {
+            this.getItems();
+        },
         /*
          * Send Email Popup
          * */
@@ -193,11 +237,19 @@ export default {
             this.$eventBus.$emit('CandidateSendMessage', this.selectedItems);
         },
         /*
-        * Dropdown Action
-        * */
+         * Send Pool Popup
+         * */
+        sendPoolPopup() {
+            this.$eventBus.$emit('CandidateSendPool', this.selectedItems);
+        },
+        /*
+         * Dropdown Action
+         * */
         dropdownAction(action) {
-              if (action === 'email') this.sendEmailPopup();
-              else if (action === 'message') this.sendMessagePopup();
+            if (action === 'email') this.sendEmailPopup();
+            else if (action === 'message') this.sendMessagePopup();
+            else if (action === 'send_pool') this.sendPoolPopup();
+            else if (action === 'remove_pool' && this.componentType === 'pool_candidate') this.removePoolPopup();
         },
         /*
          * Filter Modal
@@ -209,7 +261,7 @@ export default {
          * Success Send Email
          * */
         successSendModal() {
-            this.getCandidates();
+            this.getItems();
             this.dxInstance.clearSelection();
         },
         /*
@@ -218,9 +270,18 @@ export default {
         checkedItems(item) {
             this.selectedItems = item.map(i => i.id);
         },
+        /*
+         * Get Items
+         * */
+        getItems() {
+            this.getCandidates()
+            .then(r => {
+                this.datasource = this.candidates;
+            })
+        }
     },
     created() {
-        this.getCandidates();
+        this.getItems();
     }
 }
 </script>

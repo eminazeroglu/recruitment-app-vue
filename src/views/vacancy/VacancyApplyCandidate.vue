@@ -49,6 +49,10 @@
                         <i class="icon-chat"></i>
                         {{ translate('button.SendMessage') }}
                     </dropdown-item>
+                    <dropdown-item :style="dropdownItemStyle" @click="sendPoolPopup()">
+                        <i class="icon-folder"></i>
+                        {{ translate('button.SendPool') }}
+                    </dropdown-item>
                 </dropdown-items>
             </dropdown>
         </div>
@@ -102,6 +106,9 @@
 
         <!-- Send Message -->
         <CandidateSendMessage @success="successSendModal"/>
+
+        <!-- Send Pool -->
+        <CandidateSendPool @success="successSendModal"/>
     </page>
 </template>
 
@@ -113,6 +120,7 @@ import {mapActions, mapState} from 'vuex';
 import CandidateFilter from "../../common/components/candidate/CandidateFilter";
 import CandidateSendEmail from "../../common/components/candidate/CandidateSendEmail";
 import CandidateSendMessage from "../../common/components/candidate/CandidateSendMessage";
+import CandidateSendPool from "../../common/components/candidate/CandidateSendPool";
 
 const translateKey = 'crm.VacancyCandidate';
 
@@ -132,7 +140,7 @@ const changeStatusForm = (item = {}) => {
 
 export default {
     name: "VacancyApplyCandidate",
-    components: {CandidateSendMessage, CandidateSendEmail, CandidateFilter},
+    components: {CandidateSendPool, CandidateSendMessage, CandidateSendEmail, CandidateFilter},
     data() {
         return {
             translateKey,
@@ -288,6 +296,16 @@ export default {
                 return find.candidate.id;
             });
             this.$eventBus.$emit('CandidateSendMessage', ids);
+        },
+        /*
+         * Send Pool Popup
+         * */
+        sendPoolPopup() {
+            let ids = this.selectedItems.map(i => {
+                let find = this.dataSource.find(d => parseFloat(d.id) === parseFloat(i));
+                return find.candidate.id;
+            });
+            this.$eventBus.$emit('CandidateSendPool', ids);
         },
         /*
          * Success Send Email

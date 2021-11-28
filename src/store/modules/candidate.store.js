@@ -45,6 +45,7 @@ const CandidateStore = {
                 }
             })
             commit('SET_LIST', data);
+            return data;
         },
         /*
          * Get Candidate
@@ -95,6 +96,18 @@ const CandidateStore = {
          * */
         sendCandidateMessage({commit}, payload) {
             return candidateService.post('send-message', payload);
+        },
+        /*
+         * Send Candidate Pool
+         * */
+        sendCandidatePool({commit}, payload) {
+            return candidateService.post('send-pool', payload);
+        },
+        /*
+         * Remove Candidate Pool
+         * */
+        removeCandidatePool({commit}, payload) {
+            return candidateService.post('remove-pool', payload);
         }
     },
 

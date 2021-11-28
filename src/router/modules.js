@@ -67,6 +67,26 @@ export const routers = [
         ]
     },
     {
+        path: '/pool',
+        name: 'pool',
+        title: 'crm.Sidebar.Pools',
+        icon: 'icon-folder',
+        permission: 'pool.read',
+        sidebar: true,
+        component: () => import('../views/pool/PoolIndex'),
+        children: [
+            {
+                path: '/pool/:id/candidate',
+                name: 'pool.candidate',
+                title: 'crm.Sidebar.PoolCandidates',
+                icon: 'icon-folder',
+                permission: 'pool.read',
+                sidebar: false,
+                component: () => import('../views/pool/PoolCandidate'),
+            }
+        ]
+    },
+    {
         path: '*',
         title: 'crm.Sidebar.Interrogators',
         icon: 'icon-package1',
