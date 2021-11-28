@@ -39,6 +39,7 @@ export default {
     data() {
         return {
             translateKey,
+            type: 'candidate',
             form: formObject()
         }
     },
@@ -48,7 +49,8 @@ export default {
             this.setErrors([]);
             this.modal('SendPoolPopup');
             this.getSelectPools();
-            this.form = formObject(item);
+            this.form = formObject(item.ids);
+            this.type = item.type || 'candidate'
         });
     },
     computed: {
@@ -63,7 +65,8 @@ export default {
             .then(r => {
                 if (r) {
                     this.modal('SendPoolPopup');
-                    this.notification(this.translate('notification.CandidateSendPoolSuccess.Description'));
+                    if (this.type === 'candidate-profile') this.alert(this.translate('notification.CandidateSendPoolSuccess.Description'), ' ', 'success', false);
+                    else this.notification(this.translate('notification.CandidateSendPoolSuccess.Description'));
                     this.$emit('success', true);
                 }
             })

@@ -1,4 +1,4 @@
-<template>
+<template v-if="componentType === 'candidate'">
     <page>
         <page-head :title="pageTitle" :sub-title="pageSubTitle">
             <div class="flex items-center space-x-3">
@@ -7,7 +7,7 @@
                         {{ translate(translateKey + '.Label.Action') }}
                     </dropdown-button>
                     <dropdown-items position="left" class="top-full">
-                        <dropdown-item :style="dropdownItemStyle" v-for="i in dropdownMenus" @click="dropdownAction(i.action)">
+                        <dropdown-item :style="dropdownItemStyle" :key="'candidate_dropdown' + index" v-for="(i, index) in dropdownMenus" @click="dropdownAction(i.action)">
                             <i :class="i.icon"></i>
                             {{ i.name }}
                         </dropdown-item>
@@ -50,7 +50,7 @@
                         {{ translate(translateKey + '.Label.Action') }}
                     </dropdown-button>
                     <dropdown-items position="left" class="bottom-full">
-                        <dropdown-item :style="dropdownItemStyle" v-for="i in dropdownMenus" @click="dropdownAction(i.action)">
+                        <dropdown-item :style="dropdownItemStyle" :key="'candidate_dropdown' + index" v-for="(i, index) in dropdownMenus" @click="dropdownAction(i.action)">
                             <i :class="i.icon"></i>
                             {{ i.name }}
                         </dropdown-item>
@@ -181,7 +181,7 @@ export default {
             return this.currentPage.permission;
         },
         dxInstance() {
-            return this.$refs.dataGrid.$refs.dataGrid.instance;
+            return this.$refs.dataGrid ? this.$refs.dataGrid.$refs.dataGrid.instance : null;
         },
         componentType() {
             return 'candidate';
@@ -227,28 +227,28 @@ export default {
         /*
          * Send Email Popup
          * */
-        sendEmailPopup() {
-            this.$eventBus.$emit('CandidateSendEmail', this.selectedItems);
+        sendEmailPopup(id = null) {
+            this.$eventBus.$emit('CandidateSendEmail', {ids: id ? [id] : this.selectedItems, type: this.componentType});
         },
         /*
          * Send Message Popup
          * */
-        sendMessagePopup() {
-            this.$eventBus.$emit('CandidateSendMessage', this.selectedItems);
+        sendMessagePopup(id = null) {
+            this.$eventBus.$emit('CandidateSendMessage', {ids: id ? [id] : this.selectedItems, type: this.componentType});
         },
         /*
          * Send Pool Popup
          * */
-        sendPoolPopup() {
-            this.$eventBus.$emit('CandidateSendPool', this.selectedItems);
+        sendPoolPopup(id = null) {
+            this.$eventBus.$emit('CandidateSendPool', {ids: id ? [id] : this.selectedItems, type: this.componentType});
         },
         /*
          * Dropdown Action
          * */
-        dropdownAction(action) {
-            if (action === 'email') this.sendEmailPopup();
-            else if (action === 'message') this.sendMessagePopup();
-            else if (action === 'send_pool') this.sendPoolPopup();
+        dropdownAction(action, id = null) {
+            if (action === 'email') this.sendEmailPopup(id);
+            else if (action === 'message') this.sendMessagePopup(id);
+            else if (action === 'send_pool') this.sendPoolPopup(id);
             else if (action === 'remove_pool' && this.componentType === 'pool_candidate') this.removePoolPopup();
         },
         /*
@@ -261,8 +261,11 @@ export default {
          * Success Send Email
          * */
         successSendModal() {
-            this.getItems();
-            this.dxInstance.clearSelection();
+            if (this.componentType === 'candidate') {
+                this.getItems();
+                if (this.dxInstance)
+                    this.dxInstance.clearSelection();
+            }
         },
         /*
          * Checked Items

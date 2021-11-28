@@ -22,7 +22,7 @@ const GlobalMixin = {
         },
         routeTab() {
             return {
-                title: this.currentPage.title
+                title: this.changeRouteTab()
             }
         },
         /*
@@ -38,6 +38,9 @@ const GlobalMixin = {
     methods: {
         ...Helpers,
         ...mapActions('AppStore', ['start', 'setErrors']),
+        changeRouteTab(title = null) {
+            return title || this.currentPage.title;
+        },
         getCurrentPage () {
             try {
                 const route = this.$route ? this.$route : {};
@@ -130,18 +133,23 @@ const GlobalMixin = {
         /*
          * Modal
          * */
-        alert(text = null, title = null) {
+        alert(text = null, title = null, icon = 'question', button = true) {
             title = title ? title : this.translate('notification.Warning.Title');
             text = text ? text : this.translate('notification.Delete.Description');
+            let iconHtml = 'icon-question';
+            if (icon === 'success') iconHtml = 'icon-check';
+            if (icon === 'danger') iconHtml = 'icon-cancel';
             return swal.fire({
-                icon: 'question',
+                icon,
                 title,
                 text,
+                iconHtml: '<i class="'+iconHtml+'"></i>',
                 confirmButtonText: '<i class="icon-check"></i>' + this.translate('button.Verify'),
                 confirmButtonColor: '#79B1B9',
                 cancelButtonText: '<i class="icon-cancel"></i>' + this.translate('button.Close'),
-                showCancelButton: true,
-                cancelButtonColor: '#7A9CC7'
+                showCancelButton: button,
+                cancelButtonColor: '#7A9CC7',
+                showConfirmButton: button
             })
             .then(r => {
                 return new Promise(function (resolve, reject) {

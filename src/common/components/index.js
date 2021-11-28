@@ -19,6 +19,9 @@ import StatsBox from "./stats-box/StatsBox";
 import Accordion from "./accordion/Accordion";
 import AccordionItem from "./accordion/AccordionItem";
 import TreeList from "./treelist/TreeList";
+import Card from "./card/Card";
+import CardHead from "./card/CardHead";
+import CardBody from "./card/CardBody";
 
 export default {
     AppButton,
@@ -42,4 +45,7 @@ export default {
     Accordion,
     AccordionItem,
     TreeList,
+    Card,
+    CardHead,
+    CardBody,
 }

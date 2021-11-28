@@ -8,12 +8,14 @@ routes.map(async r => {
         title: r.title || '',
         subTitle: r.subTitle || '',
         icon: r.icon || '',
+        key: r.key || '',
         can: r.permission ? Helpers.can(r.permission) : false,
         isLogin: !!r.isLogin
     }
     delete r.title;
     delete r.subTitle;
     delete r.icon;
+    delete r.key;
     delete r.permission;
     delete r.isLogin;
 })

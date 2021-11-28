@@ -225,7 +225,7 @@ export const routers = [
     {
         path: '*',
         title: 'crm.Sidebar.Setting',
-        icon: 'icon-users',
+        icon: 'icon-cogs',
         permission: 'accept',
         sidebar: true,
         children: [

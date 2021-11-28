@@ -44,6 +44,7 @@ export default {
     data() {
         return {
             translateKey,
+            type: 'candidate',
             form: formObject()
         }
     },
@@ -52,7 +53,8 @@ export default {
         this.$eventBus.$on('CandidateSendEmail', item => {
             this.setErrors([]);
             this.modal('SendEmailPopup');
-            this.form = formObject(item);
+            this.form = formObject(item.ids);
+            this.type = item.type || 'candidate'
         });
     },
     methods: {
@@ -63,7 +65,8 @@ export default {
             .then(r => {
                 if (r) {
                     this.modal('SendEmailPopup');
-                    this.notification(this.translate('notification.CandidateSendEmailSuccess.Description'));
+                    if (this.type === 'candidate-profile') this.alert(this.translate('notification.CandidateSendEmailSuccess.Description'), ' ', 'success', false);
+                    else this.notification(this.translate('notification.CandidateSendEmailSuccess.Description'));
                     this.$emit('success', true);
                 }
             })
