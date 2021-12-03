@@ -58,6 +58,7 @@ export const routers = [
             {
                 path: '/candidate/:id/profile',
                 name: 'candidate.profile',
+                key: 'path',
                 title: 'crm.Sidebar.CandidateProfile',
                 icon: 'icon-users',
                 permission: 'candidate.read',

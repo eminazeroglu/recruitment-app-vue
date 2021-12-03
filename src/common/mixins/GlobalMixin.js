@@ -21,9 +21,8 @@ const GlobalMixin = {
             return check;
         },
         routeTab() {
-            return {
-                title: this.changeRouteTab()
-            }
+            if (!this.currentPage.key)
+                return this.currentPage.title;
         },
         /*
          * Sidebars
@@ -38,17 +37,15 @@ const GlobalMixin = {
     methods: {
         ...Helpers,
         ...mapActions('AppStore', ['start', 'setErrors']),
-        changeRouteTab(title = null) {
-            return title || this.currentPage.title;
-        },
-        getCurrentPage () {
+        getCurrentPage() {
             try {
                 const route = this.$route ? this.$route : {};
                 const find = this.recursiveSearch('name', route.name, routers)
                 if (find)
-                    return {...find, title: this.translate(find.title), permission: find.permission.split('.')[0]}
+                    return {...find, title: !find.key ? this.translate(find.title) : ' ', permission: find.permission.split('.')[0]}
                 return {};
-            }catch (e) {
+            }
+            catch (e) {
 
             }
         },
@@ -125,9 +122,9 @@ const GlobalMixin = {
             }
         },
         /*
-        * Reset Error
-        * */
-        resetError () {
+         * Reset Error
+         * */
+        resetError() {
             this.setErrors([]);
         },
         /*
@@ -143,7 +140,7 @@ const GlobalMixin = {
                 icon,
                 title,
                 text,
-                iconHtml: '<i class="'+iconHtml+'"></i>',
+                iconHtml: '<i class="' + iconHtml + '"></i>',
                 confirmButtonText: '<i class="icon-check"></i>' + this.translate('button.Verify'),
                 confirmButtonColor: '#79B1B9',
                 cancelButtonText: '<i class="icon-cancel"></i>' + this.translate('button.Close'),
@@ -160,8 +157,8 @@ const GlobalMixin = {
             })
         },
         /*
-        * Notification
-        * */
+         * Notification
+         * */
         notification(message, type = 'success', params = {}) {
             this.$toast.open({
                 message: this.translate(message),
@@ -170,8 +167,8 @@ const GlobalMixin = {
                 duration: params.duration || 3000,
                 ...params
             });
-        }
-    }
+        },
+    },
 }
 
 export default GlobalMixin;

@@ -54,6 +54,7 @@ const CandidateStore = {
             return candidateService.get(payload)
             .then(r => {
                 commit('SET_DATA', r.data.response);
+                return r.data.response;
             })
         },
         /*

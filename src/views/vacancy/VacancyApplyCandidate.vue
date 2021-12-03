@@ -1,9 +1,22 @@
 <template>
     <page>
         <page-head :title="vacancy.name || '&nbsp;'" :sub-title="currentPage.title">
-            <app-button property="warning" icon="icon-search" @click="filterModal">
-                {{ translate('button.Filter') }}
-            </app-button>
+            <div class="flex items-center space-x-3">
+                <dropdown v-if="selectedItems.length">
+                    <dropdown-button>
+                        {{ translate(translateKey + '.Label.Action') }}
+                    </dropdown-button>
+                    <dropdown-items position="right" class="top-full">
+                        <dropdown-item v-for="(i, index) in dropdownMenus" :key="'dropdown' + index" :style="dropdownItemStyle" @click="dropdownAction(i.action)">
+                            <i :class="i.icon"></i>
+                            {{ i.name }}
+                        </dropdown-item>
+                    </dropdown-items>
+                </dropdown>
+                <app-button property="warning" icon="icon-search" @click="filterModal">
+                    {{ translate('button.Filter') }}
+                </app-button>
+            </div>
         </page-head>
 
         <page-body>
@@ -33,33 +46,16 @@
                     {{ translate(translateKey + '.Label.Action') }}
                 </dropdown-button>
                 <dropdown-items position="left" class="bottom-full">
-                    <dropdown-item :style="dropdownItemStyle" @click="changeCompatibilityPopup()">
-                        <i class="icon-repeat"></i>
-                        {{ translate('button.ChangeCompatibility') }}
-                    </dropdown-item>
-                    <dropdown-item :style="dropdownItemStyle" @click="changeStatusPopup()">
-                        <i class="icon-repeat"></i>
-                        {{ translate('button.ChangeStatus') }}
-                    </dropdown-item>
-                    <dropdown-item :style="dropdownItemStyle" @click="sendEmailPopup()">
-                        <i class="icon-envelope-o"></i>
-                        {{ translate('button.SendEmail') }}
-                    </dropdown-item>
-                    <dropdown-item :style="dropdownItemStyle" @click="sendMessagePopup()">
-                        <i class="icon-chat"></i>
-                        {{ translate('button.SendMessage') }}
-                    </dropdown-item>
-                    <dropdown-item :style="dropdownItemStyle" @click="sendPoolPopup()">
-                        <i class="icon-folder"></i>
-                        {{ translate('button.SendPool') }}
+                    <dropdown-item v-for="(i, index) in dropdownMenus" :key="'dr' + index" :style="dropdownItemStyle" @click="dropdownAction(i.action)">
+                        <i :class="i.icon"></i>
+                        {{ i.name }}
                     </dropdown-item>
                 </dropdown-items>
             </dropdown>
         </div>
 
-        <div class="mt-5">
-            <CandidateFilter/>
-        </div>
+        <!-- Candidate Filter Popup -->
+        <CandidateFilter/>
 
         <!-- Change Compatibility Popup -->
         <modal id="CandidateCompatibilityChangePopup" size="xs" modal-box-style="overflow: initial">
@@ -162,6 +158,11 @@ export default {
                     slot: 'fullnameTemplate'
                 },
                 {
+                    caption: translateKey + '.Label.Email',
+                    dataField: 'candidate.email',
+                    show: true,
+                },
+                {
                     caption: translateKey + '.Label.Status',
                     dataField: 'apply_status.name',
                     customizeText: data => data.value || this.translate(translateKey + '.Label.NotSpecified'),
@@ -202,6 +203,35 @@ export default {
         },
         dataSource() {
             return this.dxInstance.getDataSource().items();
+        },
+        dropdownMenus() {
+            return [
+                {
+                    action: 'compatibility',
+                    icon: 'icon-repeat',
+                    name: this.translate('button.ChangeCompatibility')
+                },
+                {
+                    action: 'status',
+                    icon: 'icon-repeat',
+                    name: this.translate('button.ChangeStatus')
+                },
+                {
+                    action: 'email',
+                    icon: 'icon-envelope-o',
+                    name: this.translate('button.SendEmail')
+                },
+                {
+                    action: 'message',
+                    icon: 'icon-chat',
+                    name: this.translate('button.SendMessage')
+                },
+                {
+                    action: 'send_pool',
+                    icon: 'icon-folder',
+                    name: this.translate('button.SendPool')
+                }
+            ]
         }
     },
     methods: {
@@ -221,6 +251,16 @@ export default {
                     this.$tabs.close();
                 }
             })
+        },
+        /*
+         * Dropdown Action
+         * */
+        dropdownAction(action) {
+            if (action === 'compatibility') this.changeCompatibilityPopup();
+            else if (action === 'status') this.changeStatusPopup();
+            else if (action === 'email') this.sendEmailPopup();
+            else if (action === 'message') this.sendMessagePopup();
+            else if (action === 'send_pool') this.sendPoolPopup();
         },
         /*
          * Filter Modal
@@ -285,7 +325,7 @@ export default {
                 let find = this.dataSource.find(d => parseFloat(d.id) === parseFloat(i));
                 return find.candidate.id;
             });
-            this.$eventBus.$emit('CandidateSendEmail', ids);
+            this.$eventBus.$emit('CandidateSendEmail', {ids});
         },
         /*
          * Send Message Popup
@@ -295,7 +335,7 @@ export default {
                 let find = this.dataSource.find(d => parseFloat(d.id) === parseFloat(i));
                 return find.candidate.id;
             });
-            this.$eventBus.$emit('CandidateSendMessage', ids);
+            this.$eventBus.$emit('CandidateSendMessage', {ids});
         },
         /*
          * Send Pool Popup
@@ -305,7 +345,7 @@ export default {
                 let find = this.dataSource.find(d => parseFloat(d.id) === parseFloat(i));
                 return find.candidate.id;
             });
-            this.$eventBus.$emit('CandidateSendPool', ids);
+            this.$eventBus.$emit('CandidateSendPool', {ids});
         },
         /*
          * Success Send Email

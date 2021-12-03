@@ -39,7 +39,7 @@ const AppStore = {
          * */
         SET_LANGUAGE(state, payload) {
             state.appLanguage = payload;
-            localStorage.appLanguage = payload;
+            localStorage.language = payload;
         },
         /*
          * Set Photos

@@ -5,7 +5,7 @@ let routes = Helpers.mergeNested(routers.map(i => {return {...i}}));
 
 routes.map(async r => {
     r.meta = {
-        title: r.title || '',
+        title: r.key !== 'path' && r.title ? r.title : '',
         subTitle: r.subTitle || '',
         icon: r.icon || '',
         key: r.key || '',

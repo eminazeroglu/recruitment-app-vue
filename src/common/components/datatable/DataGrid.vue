@@ -142,7 +142,8 @@ import {
     DxTotalItem
 } from 'devextreme-vue/data-grid';
 import {DxButton} from 'devextreme-vue/button';
-import UtilDataGridAndDataTree from "../../../plugins/dataGridAndDataTree";
+import UtilDataGridAndDataTree, {DxTranslates} from "../../../plugins/dataGridAndDataTree";
+import {loadMessages} from "devextreme/localization";
 
 export default {
     name: "DataGrid",
@@ -190,12 +191,24 @@ export default {
             self.page.limit = self.pageLimit;
         if (self.pageSize)
             self.page.size = self.pageSize;
+
     },
     mounted() {
-        this.$emit('getInstance', this.dxInstance)
+        this.$emit('getInstance', this.dxInstance);
+        //this.dxTranslate();
     },
     methods: {
         ...UtilDataGridAndDataTree.methods,
+        dxTranslate () {
+            const items = [];
+            Object.keys(DxTranslates).forEach(i => {
+                items[i] = this.translate(DxTranslates[i])
+            })
+            console.log(items);
+            loadMessages({
+                "en": items
+            })
+        },
         rowMap(data) {
             return {
                 ...data.data,

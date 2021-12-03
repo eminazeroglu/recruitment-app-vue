@@ -218,7 +218,9 @@
                                     </h4>
                                     <div class="flex flex-col space-y-5">
                                         <div class="flex flex-col space-y-1">
-                                            <label class="font-normal">{{ candidate.hobbies.map(i => i.hobby.name).join(', ') }}</label>
+                                            <label class="font-normal">{{
+                                                    candidate.hobbies.map(i => i.hobby.name).join(', ')
+                                                                       }}</label>
                                         </div>
                                     </div>
                                 </div>
@@ -255,23 +257,26 @@
  * */
 import {mapState, mapActions} from 'vuex'
 import App from "../../App";
-import CandidateIndex from "./CandidateIndex";
+import CandidateMixin from "../../common/mixins/CandidateMixin";
 
 const translateKey = 'crm.CandidateProfile.Label'
 
 export default {
     name: "CandidateProfile",
-    extends: CandidateIndex,
     components: {App},
+    mixins: [CandidateMixin],
     data() {
         return {
-            translateKey
+            translateKey,
+            candidate: {}
         }
     },
     computed: {
-        ...mapState('CandidateStore', ['candidate']),
         componentType() {
             return 'candidate-profile';
+        },
+        routeTab() {
+            return this.candidate.fullname;
         },
     },
     methods: {
@@ -281,13 +286,13 @@ export default {
         this.getCandidate(this.$route.params.id)
         .then(r => {
             if (r) {
-
+                this.candidate = r;
             }
         })
         .catch(err => {
             this.$tabs.close();
         })
-    }
+    },
 }
 </script>
 
