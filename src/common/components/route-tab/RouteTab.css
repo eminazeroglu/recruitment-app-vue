@@ -1,0 +1,182 @@
+:root {
+    --routeTabBg: #d1d5db;
+    --routeTabBorderBottom: #d1d5db;
+    --routeTabLinkHeight: 2.25rem;
+    --routeTabLinkRound: .5rem;
+    --routeTabLinkMarginLeft: 0.25rem;
+    --routeTabLinkBg: #e5e7eb;
+    --routeTabLinkActiveBg: #fff;
+    --routeTabLinkCloseBg: #4d4d4d;
+    --routeTabLinkCloseHoverBg: #d1d5db;
+}
+
+.route-tab {
+    display: flex;
+    align-items: center;
+    background: var(--routeTabBg);
+    font-size: 1rem;
+    padding: 0.75rem 1rem 0;
+    border-bottom: 1px solid var(--routeTabBorderBottom);
+    justify-content: space-between;
+}
+
+.route-tab__nav {
+    display: grid;
+    height: var(--routeTabLinkHeight);
+    overflow: hidden;
+}
+
+.route-tab__link {
+    display: flex;
+    white-space: nowrap;
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+    background: var(--routeTabLinkBg);
+    align-items: center;
+    padding: 0 1rem;
+    border-top-left-radius: var(--routeTabLinkRound);
+    border-top-right-radius: var(--routeTabLinkRound);
+    justify-content: space-between;
+    cursor: pointer;
+}
+
+.route-tab__link:not(:first-child) {
+    margin-left: var(--routeTabLinkMarginLeft);
+}
+
+.route-tab__link--active {
+    background: var(--routeTabLinkActiveBg);
+}
+
+.route-tab__link__arrow {
+    position: relative;
+    width: .875rem;
+    height: .875rem;
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+.route-tab__link__arrow:after, .route-tab__link__arrow:before {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    margin-left: -4px;
+    display: block;
+    content: "";
+    width: 8px;
+    height: 1px;
+    background-color: var(--routeTabLinkCloseBg);
+    transition: background-color .2s ease-in-out;
+}
+
+.route-tab__link__arrow:before {
+    transform: rotate(-45deg);
+}
+
+.route-tab__link__arrow:after {
+    transform: rotate(45deg);
+}
+
+.route-tab__link__arrow:hover {
+    background: var(--routeTabLinkCloseHoverBg);
+}
+
+.route-tab__link__text {
+    top: 2px;
+    position: relative;
+    margin: 0 0.25rem;
+    width: 100%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.route-tab__link__icon {
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+}
+
+.route-tab__link__inner {
+    display: flex;
+    align-items: center;
+    white-space: nowrap;
+    width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    height: 2.25rem;
+}
+
+.route-tab__dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.route-tab__dropdown__button {
+    background: var(--routeTabLinkBg);
+    width: 2.5rem;
+    height: var(--routeTabLinkHeight);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-top-left-radius: var(--routeTabLinkRound);
+    border-top-right-radius: var(--routeTabLinkRound);
+    margin-left: var(--routeTabLinkMarginLeft);
+}
+
+.route-tab__dropdown:focus-within > .route-tab__dropdown__items {
+    visibility: visible;
+    opacity: 1;
+    transform: translateY(0.25rem);
+}
+
+.route-tab__dropdown__items {
+    border: 1px solid #e0e0e0;
+    position: absolute;
+    top: 100%;
+    right: 0;
+    min-width: 15rem;
+    transition-property: all;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transition-duration: 150ms;
+    opacity: 0;
+    visibility: hidden;
+    z-index: 50;
+    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+    background: #fff;
+    max-height: 30rem;
+    overflow: hidden;
+    overflow-y: auto;
+}
+
+.route-tab__dropdown__li {
+    white-space: nowrap;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-right: .875rem;
+}
+
+.route-tab__dropdown__li:not(:last-child) {
+    border-bottom: 1px solid var(--routeTabBorderBottom);
+}
+
+.route-tab__dropdown__li .route-tab__link__arrow {
+    display: inline-flex;
+    justify-content: center;
+}
+
+.route-tab__dropdown__li--active {
+    background: var(--routeTabLinkBg);
+}
+
+.route-tab__dropdown__item {
+    display: flex;
+    width: 100%;
+    align-items: center;
+    height: var(--routeTabLinkHeight);
+    padding: 0 .875rem;
+    text-align: left;
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+}
+

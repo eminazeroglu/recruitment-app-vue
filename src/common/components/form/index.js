@@ -11,6 +11,8 @@ import FormColor from "./color/FormColor";
 import FormPhoto from "./photo/FormPhoto";
 import FormPhotos from "./photos/FormPhotos";
 import FormDate from "./date/FormDate";
+import FormHtmlEditor from "./html-editor/FormHtmlEditor";
+import FormRead from './read/FormRead'
 
 
 import "./index.css"
@@ -28,5 +30,7 @@ export default {
     FormColor,
     FormPhoto,
     FormPhotos,
-    FormDate
+    FormDate,
+    FormHtmlEditor,
+    FormRead
 }

@@ -29,14 +29,27 @@ export default {
             return {id: this.pool.id};
         }
     },
+    watch: {
+        $route() {
+            this.getById();
+        }
+    },
     methods: {
         ...mapActions('PoolStore', ['getPoolCandidates', 'getPool']),
+        getById() {
+            this.getPool(this.$route.params.id)
+            .then(r => {
+                this.setRouteTab({
+                    title: this.pool.name + ' - ' + this.currentPage.title
+                })
+            })
+            .catch(err => {
+                this.closeRouteTab();
+            })
+        }
     },
     created() {
-        this.getPool(this.$route.params.id)
-        .catch(err => {
-            this.$tabs.close();
-        })
+        this.getById();
     }
 }
 </script>

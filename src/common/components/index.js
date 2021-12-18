@@ -22,6 +22,7 @@ import TreeList from "./treelist/TreeList";
 import Card from "./card/Card";
 import CardHead from "./card/CardHead";
 import CardBody from "./card/CardBody";
+import Alert from "./alert/Alert";
 
 export default {
     AppButton,
@@ -48,4 +49,5 @@ export default {
     Card,
     CardHead,
     CardBody,
+    Alert
 }

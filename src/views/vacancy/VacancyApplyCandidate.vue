@@ -248,7 +248,7 @@ export default {
                     this.getVacancyCandidates({vacancy_id: vacancy.id});
                 }
                 else {
-                    this.$tabs.close();
+                    this.closeRouteTab();
                 }
             })
         },

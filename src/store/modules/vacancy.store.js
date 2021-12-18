@@ -6,6 +6,7 @@ const VacancyStore = {
 
     /* State */
     state: {
+        vacancyFilters: {},
         vacancy: {},
         vacancies: [],
         vacancyCandidates: [],
@@ -30,6 +31,12 @@ const VacancyStore = {
          * */
         SET_LIST_CANDIDATE(state, payload) {
             state.vacancyCandidates = payload;
+        },
+        /*
+         * SET LIST FILTER
+         * */
+        SET_LIST_FILTER(state, payload) {
+            state.vacancyFilters = payload;
         }
     },
 
@@ -92,6 +99,15 @@ const VacancyStore = {
             return vacancyService.get(null, payload)
             .then(r => {
                 commit('SET_LIST', r.data.response);
+            })
+        },
+        /*
+         * Get Vacancy Filter
+         * */
+        getVacancyFilter({commit}, payload = {}) {
+            return vacancyService.post('filter', payload)
+            .then(r => {
+                commit('SET_LIST_FILTER', r.data.response);
             })
         },
         /*

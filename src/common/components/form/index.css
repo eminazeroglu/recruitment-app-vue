@@ -60,6 +60,7 @@ textarea.form-element {
 
 .vue-treeselect__control {
     border: none !important;
+    width: calc(100% - 5px);
 }
 .vue-treeselect__single-value {
     line-height: 38px;

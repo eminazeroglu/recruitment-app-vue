@@ -271,27 +271,35 @@ export default {
             candidate: {}
         }
     },
+    watch: {
+        $route() {
+            this.getById();
+        }
+    },
     computed: {
         componentType() {
             return 'candidate-profile';
         },
-        routeTab() {
-            return this.candidate.fullname;
-        },
     },
     methods: {
         ...mapActions('CandidateStore', ['getCandidate']),
+        getById() {
+            this.getCandidate(this.$route.params.id)
+            .then(r => {
+                if (r) {
+                    this.candidate = r;
+                    this.setRouteTab({
+                        title: this.candidate.fullname
+                    })
+                }
+            })
+            .catch(err => {
+                this.closeRouteTab();
+            })
+        }
     },
     created() {
-        this.getCandidate(this.$route.params.id)
-        .then(r => {
-            if (r) {
-                this.candidate = r;
-            }
-        })
-        .catch(err => {
-            this.$tabs.close();
-        })
+        this.getById();
     },
 }
 </script>

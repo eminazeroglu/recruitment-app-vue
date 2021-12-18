@@ -1,19 +1,27 @@
 <template>
     <div class="yv-photos w-full">
         <div class="yv-photos__content w-full">
-            <grid cols="12">
+            <draggable
+                :list="items"
+                v-bind="dragOptions"
+                class="w-full grid gap-5 grid-cols-12"
+                ghost-class="ghost"
+                handle=".handle"
+                @update="updateOrder"
+                v-if="items.length"
+            >
                 <grid-col :col="col" v-for="(item, index) in items" :key="'yv-photos' + index">
-                    <div data-dragable="true" data-rotate="0" :class="['yv-photos__item']">
-                        <figure class="yv-photos__item__photo">
+                    <div data-dragable="true" data-rotate="0" :class="['yv-photos__item', 'bg-white']">
+                        <figure class="yv-photos__item__photo handle cursor-move">
                             <img :src="item.link" :style="{'height': imgHeight}" alt="">
                         </figure>
                         <div class="yv-photos__item__action">
-                    <span
-                        class="yv-photos__item__action__button"
-                        @click="remove(index)"
-                    >
-                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-trash"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
-                    </span>
+                        <span
+                            class="yv-photos__item__action__button"
+                            @click="remove(index)"
+                        >
+                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-trash"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                        </span>
                             <span
                                 class="yv-photos__item__action__button"
                                 v-if="item.rotate"
@@ -31,7 +39,7 @@
                         </div>
                     </div>
                 </grid-col>
-            </grid>
+            </draggable>
         </div>
         <div class="yv-photos__buttons">
             <label class="yv-photos__button">
@@ -65,9 +73,11 @@
  * Import Components
  * */
 import FileManagementService from '../../../../services/fileManagement.service'
+import draggable from 'vuedraggable'
 
 export default {
     name: "FormPhotos",
+    components: {draggable},
     props: {
         value: {
             default: null
@@ -88,7 +98,7 @@ export default {
             default: 'default',
         },
         itemPhotos: {
-            default: null,
+            default: Array,
         },
         thumbnail: {
             default: null
@@ -107,6 +117,16 @@ export default {
             customFormat: ['image/jpeg', 'image/png', 'image/svg+xml']
         }
     },
+    computed: {
+        dragOptions() {
+            return {
+                animation: 200,
+                group: "description",
+                disabled: false,
+                ghostClass: "ghost"
+            };
+        }
+    },
     watch: {
         itemPhotos(val) {
             this.items = val;
@@ -118,7 +138,18 @@ export default {
             this.customFormat = val || ['image/jpeg', 'image/png', 'image/svg+xml']
         }
     },
+    created() {
+        this.items = this.itemPhotos;
+        this.customThumbnail = this.thumbnail || {width: 200, height: 200};
+        this.customFormat = this.format || ['image/jpeg', 'image/png', 'image/svg+xml'];
+    },
     methods: {
+        /*
+         * Update Order
+         * */
+        updateOrder() {
+            this.$emit('input', this.items.map(i => i.name));
+        },
         /*
          * Upload
          * */
@@ -146,7 +177,7 @@ export default {
                             self.cacheItems[self.items.length - 1] = form;
                             self.$emit('input', self.items.map(i => i.name));
                             count += 1;
-                            if(fileCount === count) {
+                            if (fileCount === count) {
                                 self.isLoading = false;
                             }
                         })
@@ -218,5 +249,5 @@ export default {
 </script>
 
 <style scoped>
-    @import "./FormPhotos.css";
+@import "./FormPhotos.css";
 </style>

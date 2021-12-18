@@ -59,7 +59,9 @@
 
         <DxPaging :enabled="allowPaging" :page-size="page.limit"/>
         <DxSelection
-            :mode="selectionMode"
+            v-if="selectionMode"
+            mode="multiple"
+            :select-all-mode="'page'"
             :show-check-boxes-mode="'always'"
         />
         <DxPager
@@ -89,6 +91,25 @@
 
         >
             <DxFormat v-if="item.formatType" :type="item.formatType" :precision="item.formatPrecision"/>
+            <DxColumn
+                :data-field="subItem.dataField"
+                :caption="subItem.caption"
+                :customize-text="subItem.customizeText"
+                :calculate-cell-value="subItem.calculateCellValue"
+                :true-text="subItem.trueText"
+                :false-text="subItem.falseText"
+                :allowEditing="subItem.allowEditing"
+                :allowFiltering="subItem.allowFiltering"
+                :allow-fixing="subItem.allowFixing"
+                :width="subItem.width ? subItem.width : null"
+                :alignment="subItem.alignment ? subItem.alignment : null"
+                :allow-sorting="allowSorting"
+                :cell-template="subItem.template"
+                v-if="item.children.length > 0 && subItem.show"
+                :key="subItemIndex+'_'+Math.random()"
+                v-for="(subItem, subItemIndex) in item.children"
+            >
+            </DxColumn>
         </DxColumn>
 
         <template #[itemTemplate(item)]="{data}" v-for="(item, itemIndex) in columns">

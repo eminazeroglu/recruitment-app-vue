@@ -28,7 +28,6 @@
         :key-expr="keyExpr"
         @row-prepared="rowPrepared"
         @row-click="rowClick"
-        :allowSelectAll="false"
         @selection-changed="selectionChanged"
         :scrolling="{useNative: nativeScroll}"
     >
@@ -84,6 +83,25 @@
 
         >
             <DxFormat v-if="item.formatType" :type="item.formatType" :precision="item.formatPrecision"/>
+            <DxColumn
+                :data-field="subItem.dataField"
+                :caption="subItem.caption"
+                :customize-text="subItem.customizeText"
+                :calculate-cell-value="subItem.calculateCellValue"
+                :true-text="subItem.trueText"
+                :false-text="subItem.falseText"
+                :allowEditing="subItem.allowEditing"
+                :allowFiltering="subItem.allowFiltering"
+                :allow-fixing="subItem.allowFixing"
+                :width="subItem.width ? subItem.width : null"
+                :alignment="subItem.alignment ? subItem.alignment : null"
+                :allow-sorting="allowSorting"
+                :cell-template="subItem.template"
+                v-if="item.children.length > 0 && subItem.show"
+                :key="subItemIndex+'_'+Math.random()"
+                v-for="(subItem, subItemIndex) in item.children"
+            >
+            </DxColumn>
         </DxColumn>
 
         <template #[itemTemplate(item)]="{data}" v-for="(item, itemIndex) in columns">
@@ -142,8 +160,7 @@ import {
     DxTotalItem
 } from 'devextreme-vue/data-grid';
 import {DxButton} from 'devextreme-vue/button';
-import UtilDataGridAndDataTree, {DxTranslates} from "../../../plugins/dataGridAndDataTree";
-import {loadMessages} from "devextreme/localization";
+import UtilDataGridAndDataTree from "../../../plugins/dataGridAndDataTree";
 
 export default {
     name: "DataGrid",
@@ -191,24 +208,12 @@ export default {
             self.page.limit = self.pageLimit;
         if (self.pageSize)
             self.page.size = self.pageSize;
-
     },
     mounted() {
-        this.$emit('getInstance', this.dxInstance);
-        //this.dxTranslate();
+        this.$emit('getInstance', this.dxInstance)
     },
     methods: {
         ...UtilDataGridAndDataTree.methods,
-        dxTranslate () {
-            const items = [];
-            Object.keys(DxTranslates).forEach(i => {
-                items[i] = this.translate(DxTranslates[i])
-            })
-            console.log(items);
-            loadMessages({
-                "en": items
-            })
-        },
         rowMap(data) {
             return {
                 ...data.data,

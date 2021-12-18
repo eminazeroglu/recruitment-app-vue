@@ -1,0 +1,19 @@
+.tox-tinymce {
+    border: none !important;
+    width: 100%;
+}
+.tox-fullscreen .tox.tox-tinymce.tox-fullscreen {
+    z-index: 9999 !important;
+}
+
+.tox-notifications-container {
+    display: none;
+}
+
+.tox-statusbar {
+    height: 25px !important;
+}
+
+.tox-statusbar__text-container .tox-statusbar__branding {
+    display: none !important;
+}

@@ -4,6 +4,7 @@ import Vuex from 'vuex'
 Vue.use(Vuex);
 
 import AppStore from "./modules/app.store";
+import RouteTabStore from "../common/components/route-tab/Route.store";
 import AuthStore from "./modules/auth.store";
 import UserStore from "./modules/user.store";
 import PermissionStore from "./modules/permission.store";
@@ -30,6 +31,7 @@ import PoolStore from "./modules/pool.store";
 export default new Vuex.Store({
     modules: {
         AppStore,
+        RouteTabStore,
         AuthStore,
         UserStore,
         PermissionStore,

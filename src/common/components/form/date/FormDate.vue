@@ -6,6 +6,7 @@
         :type="type"
         :lang="datepickerTranslates"
         v-model="date"
+        :disabled-date="disabledRange"
         v-bind="$props"
     ></date-picker>
 </template>
@@ -34,6 +35,12 @@ export default {
         displayFormat: {
             default: 'DD-MM-YYYY'
         },
+        disabledStart: {
+            default: null
+        },
+        disabledEnd: {
+            default: null
+        }
     },
     data() {
         return {
@@ -43,6 +50,9 @@ export default {
     methods: {
         valueChange(val) {
             this.$emit('input', val ? moment(val).format(this.valueFormat) : null)
+        },
+        disabledRange(date) {
+            return date < new Date(2021, 12, 2);
         },
         shortWeekDayName(data) {
             const text = data.split(' ');

@@ -8,7 +8,9 @@ const UserStore = {
     /* State */
     state: {
         user: {},
-        users: []
+        users: [],
+        recruiters: [],
+        select_recruiters: [],
     },
 
     /* Mutation */
@@ -24,6 +26,18 @@ const UserStore = {
          * */
         SET_LIST(state, payload) {
             state.users = payload;
+        },
+        /*
+         * SET LIST_RECRUITER
+         * */
+        SET_LIST_RECRUITER(state, payload) {
+            state.recruiters = payload;
+        },
+        /*
+         * SET LIST RECRUITER SELECT
+         * */
+        SET_LIST_RECRUITER_SELECT(state, payload) {
+            state.select_recruiters = payload;
         }
     },
 
@@ -63,6 +77,33 @@ const UserStore = {
             return userService.get(null, payload)
             .then(r => {
                 commit('SET_LIST', r.data.response);
+            })
+        },
+        /*
+         * Get Recruiters
+         * */
+        getRecruiters({commit}, payload = null) {
+            const data = new CustomStore({
+                load: function(loadOptions) {
+                    return userService.get(null, {datatable: true, ...loadOptions, ...payload, type: 'hr'})
+                    .then(r => {
+                        const data = r.data.response;
+                        return {
+                            data: data.data,
+                            totalCount: data.total
+                        }
+                    })
+                }
+            })
+            commit('SET_LIST_RECRUITER', data);
+        },
+        /*
+         * Get Select Recruiters
+         * */
+        getSelectRecruiters ({commit}, payload = {}) {
+            return userService.get(null, {...payload, type: 'hr'})
+            .then(r => {
+                commit('SET_LIST_RECRUITER_SELECT', r.data.response);
             })
         },
         /*

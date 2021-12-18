@@ -1,0 +1,49 @@
+.alert-box {
+    @apply bg-gray-200 flex w-full rounded items-center
+}
+.alert-box__icon {
+    @apply w-20 flex items-center justify-center border-r border-gray-300 h-full p-5 text-4xl text-gray-500
+}
+.alert-box__text {
+    @apply p-5 w-full text-gray-600
+}
+
+.alert-box--danger {
+    @apply bg-red-500 text-white
+}
+.alert-box--danger .alert-box__icon {
+    @apply border-red-400 text-white
+}
+.alert-box--danger .alert-box__text {
+    @apply text-white
+}
+
+.alert-box--success {
+    @apply bg-green-500 text-white
+}
+.alert-box--success .alert-box__icon {
+    @apply border-green-400 text-white
+}
+.alert-box--success .alert-box__text {
+    @apply text-white
+}
+
+.alert-box--info {
+    @apply bg-blue-500 text-white
+}
+.alert-box--info .alert-box__icon {
+    @apply border-blue-400 text-white
+}
+.alert-box--info .alert-box__text {
+    @apply text-white
+}
+
+.alert-box--warning {
+    @apply bg-yellow-500 text-white
+}
+.alert-box--warning .alert-box__icon {
+    @apply border-yellow-400 text-white
+}
+.alert-box--warning .alert-box__text {
+    @apply text-white
+}

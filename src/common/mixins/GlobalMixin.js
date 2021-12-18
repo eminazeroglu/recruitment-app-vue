@@ -1,6 +1,7 @@
 import Helpers from "../../plugins/helpers";
 import {mapState, mapActions} from 'vuex'
 import {routers} from "../../router/modules";
+import RouteTabMixin from "../components/route-tab/RouteTabMixin";
 
 const GlobalMixin = {
     computed: {
@@ -20,10 +21,6 @@ const GlobalMixin = {
             })(navigator.userAgent || navigator.vendor || window.opera);
             return check;
         },
-        routeTab() {
-            if (!this.currentPage.key)
-                return this.currentPage.title;
-        },
         /*
          * Sidebars
          * */
@@ -42,7 +39,11 @@ const GlobalMixin = {
                 const route = this.$route ? this.$route : {};
                 const find = this.recursiveSearch('name', route.name, routers)
                 if (find)
-                    return {...find, title: !find.key ? this.translate(find.title) : ' ', permission: find.permission.split('.')[0]}
+                    return {
+                        ...find,
+                        title: !find.key ? this.translate(find.title) : ' ',
+                        permission: find.permission.split('.')[0]
+                    }
                 return {};
             }
             catch (e) {
