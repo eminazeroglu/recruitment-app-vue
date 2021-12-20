@@ -68,30 +68,44 @@ const ProfessionStore = {
         getSelectProfessions({commit}, payload = {}) {
             return professionService.get('', payload)
             .then(r => {
-                let result = r.data.response;
-                if (payload.id) result = r.data.response.filter(i => parseFloat(i.id) !== parseFloat(payload.id))
-                commit('SET_LIST_PROFESSION', result);
+                commit('SET_LIST_PROFESSION', r.data.response);
+                return r.data.response;
             })
         },
         /*
          * Set Profession
          * */
-        setProfession({commit}, payload) {
-            if (payload.id)
-                return professionService.put(payload.id, payload);
-            return professionService.post(null, payload);
+        setProfession({commit, dispatch}, payload) {
+            let result;
+            if (payload.id) result = professionService.put(payload.id, payload);
+            else result = professionService.post(null, payload);
+            return result.then(r => {
+                dispatch('getProfessions');
+                dispatch('getSelectProfessions');
+                return r.data.response;
+            })
         },
         /*
          * Action Profession
          * */
-        actionProfession({commit}, payload) {
-            return professionService.post('action', payload);
+        actionProfession({commit, dispatch}, payload) {
+            return professionService.post('action', payload)
+            .then(r => {
+                dispatch('getProfessions');
+                dispatch('getSelectProfessions');
+                return r.data.response;
+            })
         },
         /*
          * Delete Profession
          * */
-        deleteProfession({commit}, payload) {
-            return professionService.delete(payload);
+        deleteProfession({commit, dispatch}, payload) {
+            return professionService.delete(payload)
+            .then(r => {
+                dispatch('getProfessions');
+                dispatch('getSelectProfessions');
+                return r.data.response;
+            })
         }
     },
 

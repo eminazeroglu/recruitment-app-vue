@@ -7,7 +7,8 @@ const EducationDegreeStore = {
     /* State */
     state: {
         educationDegree: {},
-        educationDegrees: []
+        educationDegrees: [],
+        selectEducationDegrees: [],
     },
 
     /* Mutation */
@@ -23,6 +24,12 @@ const EducationDegreeStore = {
          * */
         SET_LIST(state, payload) {
             state.educationDegrees = payload;
+        },
+        /*
+         * SET SELECT
+         * */
+        SET_SELECT(state, payload) {
+            state.selectEducationDegrees = payload;
         }
     },
 
@@ -61,28 +68,43 @@ const EducationDegreeStore = {
         getSelectEducationDegrees({commit}, payload = {}) {
             return educationDegreeService.get(null, payload)
             .then(r => {
-                commit('SET_LIST', r.data.response);
+                commit('SET_SELECT', r.data.response);
             })
         },
         /*
          * Set EducationDegree
          * */
-        setEducationDegree({commit}, payload) {
-            if (payload.id)
-                return educationDegreeService.put(payload.id, payload);
-            return educationDegreeService.post(null, payload);
+        setEducationDegree({commit, dispatch}, payload) {
+            let result;
+            if (payload.id) result = educationDegreeService.put(payload.id, payload);
+            else result = educationDegreeService.post(null, payload);
+            return result.then(r => {
+                dispatch('getEducationDegrees');
+                dispatch('getSelectEducationDegrees');
+                return r.data.response;
+            })
         },
         /*
          * Action EducationDegree
          * */
-        actionEducationDegree({commit}, payload) {
-            return educationDegreeService.post('action', payload);
+        actionEducationDegree({commit, dispatch}, payload) {
+            return educationDegreeService.post('action', payload)
+            .then(r => {
+                dispatch('getEducationDegrees');
+                dispatch('getSelectEducationDegrees');
+                return r.data.response;
+            })
         },
         /*
          * Delete EducationDegree
          * */
-        deleteEducationDegree({commit}, payload) {
-            return educationDegreeService.delete(payload);
+        deleteEducationDegree({commit, dispatch}, payload) {
+            return educationDegreeService.delete(payload)
+            .then(r => {
+                dispatch('getEducationDegrees');
+                dispatch('getSelectEducationDegrees');
+                return r.data.response;
+            })
         }
     },
 

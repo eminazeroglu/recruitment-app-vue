@@ -7,7 +7,8 @@ const VacancyStatusStore = {
     /* State */
     state: {
         vacancyStatus: {},
-        vacancyStatuses: []
+        vacancyStatuses: [],
+        select_vacancyStatuses: [],
     },
 
     /* Mutation */
@@ -23,6 +24,12 @@ const VacancyStatusStore = {
          * */
         SET_LIST(state, payload) {
             state.vacancyStatuses = payload;
+        },
+        /*
+         * SET SELECT
+         * */
+        SET_SELECT(state, payload) {
+            state.select_vacancyStatuses = payload;
         }
     },
 
@@ -61,28 +68,43 @@ const VacancyStatusStore = {
         getSelectVacancyStatuses({commit}, payload = {}) {
             return vacancyStatusService.get(null, payload)
             .then(r => {
-                commit('SET_LIST', r.data.response);
+                commit('SET_SELECT', r.data.response);
             })
         },
         /*
          * Set VacancyStatus
          * */
-        setVacancyStatus({commit}, payload) {
-            if (payload.id)
-                return vacancyStatusService.put(payload.id, payload);
-            return vacancyStatusService.post(null, payload);
+        setVacancyStatus({commit, dispatch}, payload) {
+            let result;
+            if (payload.id) result = vacancyStatusService.put(payload.id, payload);
+            else result = vacancyStatusService.post(null, payload);
+            return result.then(r => {
+                dispatch('getVacancyStatuses');
+                dispatch('getSelectVacancyStatuses');
+                return r.data.response;
+            })
         },
         /*
          * Action VacancyStatus
          * */
-        actionVacancyStatus({commit}, payload) {
-            return vacancyStatusService.post('action', payload);
+        actionVacancyStatus({commit, dispatch}, payload) {
+            return vacancyStatusService.post('action', payload)
+            .then(r => {
+                dispatch('getVacancyStatuses');
+                dispatch('getSelectVacancyStatuses');
+                return r.data.response;
+            })
         },
         /*
          * Delete VacancyStatus
          * */
-        deleteVacancyStatus({commit}, payload) {
-            return vacancyStatusService.delete(payload);
+        deleteVacancyStatus({commit, dispatch}, payload) {
+            return vacancyStatusService.delete(payload)
+            .then(r => {
+                dispatch('getVacancyStatuses');
+                dispatch('getSelectVacancyStatuses');
+                return r.data.response;
+            })
         }
     },
 

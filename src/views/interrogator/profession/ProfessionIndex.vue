@@ -7,7 +7,7 @@
         </page-head>
 
         <page-body>
-            <data-grid
+            <tree-list
                 :data-source="professions"
                 :columns="columns"
                 :action-column-width="120"
@@ -24,7 +24,7 @@
                     />
 
                     <app-button
-                        v-if="can(permission + '.action')"
+                        v-if="can(permission + '.action') && !list.row.hasChild"
                         :sm="true"
                         @click="action(list.row, 'active')"
                         :title="list.row.action.active ? translate('button.DeActivate') : translate('button.Activate')"
@@ -33,16 +33,16 @@
                     />
 
                     <app-button
-                        v-if="can(permission + '.delete')"
+                        v-if="can(permission + '.delete') && !list.row.hasChild"
                         :sm="true"
-                        @click="remove(list.row.id)"
+                        @click="remove(list.row)"
                         :title="translate('button.Delete')"
                         icon="icon-trash-2"
                         property="danger"
                     />
 
                 </div>
-            </data-grid>
+            </tree-list>
         </page-body>
 
         <modal :id="modalId" size="xs" modal-box-style="overflow: initial">
@@ -65,7 +65,7 @@
                             :label="translate(translateKey + '.Label.Parent')"
                             name="parent_id"
                         >
-                            <form-tree-select :options="listProfessions" v-model="form.parent_id"/>
+                            <form-tree-select :options="parents" v-model="form.parent_id"/>
                         </form-group>
 
                         <app-button class="justify-center" property="success" type="submit">
@@ -100,12 +100,6 @@ export default {
                     dataField: 'name',
                     show: true
                 },
-                {
-                    caption: translateKey + '.Label.Parent',
-                    dataField: 'parent.name',
-                    show: true,
-                    width: 300
-                },
             ],
             form: {}
         }
@@ -114,6 +108,10 @@ export default {
         ...mapState('ProfessionStore', ['professions', 'listProfessions']),
         permission() {
             return this.currentPage.permission;
+        },
+        parents() {
+            if (this.form.id) return this.listProfessions.filter(i => i.id !== this.form.id);
+            return this.listProfessions;
         }
     },
     methods: {
@@ -142,21 +140,25 @@ export default {
             this.modal(this.modalId)
             this.modelShow = false;
             this.resetError();
-            this.getSelectProfessions({id: item.id});
+            this.getSelectProfessions();
             this.formCreate(item);
         },
         /*
          * Remove
          * */
-        remove(id) {
-            this.alert().then(r => this.deleteProfession(id).then(r => this.getProfessions()))
+        remove(item) {
+            if (!item.hasChild) {
+                this.alert().then(r => this.deleteProfession(item.id))
+            }
         },
         /*
          * Action
          * */
         action(item, type) {
-            let action = item.action[type] ? 0 : 1;
-            this.actionProfession({id: item.id, type, action}).then(r => this.getProfessions())
+            if (!item.hasChild) {
+                let action = item.action[type] ? 0 : 1;
+                this.actionProfession({id: item.id, type, action})
+            }
         },
         /*
          * Save
@@ -166,7 +168,6 @@ export default {
             .then(r => {
                 if (r) {
                     this.modal(this.modalId);
-                    this.getProfessions();
                 }
             })
         }

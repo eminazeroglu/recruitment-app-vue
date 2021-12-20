@@ -7,7 +7,8 @@ const LanguageStore = {
     /* State */
     state: {
         language: {},
-        languages: []
+        languages: [],
+        select_languages: [],
     },
 
     /* Mutation */
@@ -23,6 +24,12 @@ const LanguageStore = {
          * */
         SET_LIST(state, payload) {
             state.languages = payload;
+        },
+        /*
+         * SET SELECT
+         * */
+        SET_SELECT(state, payload) {
+            state.select_languages = payload;
         }
     },
 
@@ -61,28 +68,43 @@ const LanguageStore = {
         getSelectLanguages({commit}, payload = {}) {
             return languageService.get(null, payload)
             .then(r => {
-                commit('SET_LIST', r.data.response);
+                commit('SET_SELECT', r.data.response);
             })
         },
         /*
          * Set Language
          * */
-        setLanguage({commit}, payload) {
-            if (payload.id)
-                return languageService.put(payload.id, payload);
-            return languageService.post(null, payload);
+        setLanguage({commit, dispatch}, payload) {
+            let result;
+            if (payload.id) result = languageService.put(payload.id, payload);
+            else result = languageService.post(null, payload);
+            return result.then(r => {
+                dispatch('getLanguages');
+                dispatch('getSelectLanguages');
+                return r.data.response;
+            })
         },
         /*
          * Action Language
          * */
-        actionLanguage({commit}, payload) {
-            return languageService.post('action', payload);
+        actionLanguage({commit, dispatch}, payload) {
+            return languageService.post('action', payload)
+            .then(r => {
+                dispatch('getLanguages');
+                dispatch('getSelectLanguages');
+                return r.data.response;
+            })
         },
         /*
          * Delete Language
          * */
-        deleteLanguage({commit}, payload) {
-            return languageService.delete(payload);
+        deleteLanguage({commit, dispatch}, payload) {
+            return languageService.delete(payload)
+            .then(r => {
+                dispatch('getLanguages');
+                dispatch('getSelectLanguages');
+                return r.data.response;
+            })
         }
     },
 

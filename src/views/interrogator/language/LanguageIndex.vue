@@ -134,14 +134,14 @@ export default {
          * Remove
          * */
         remove(id) {
-            this.alert().then(r => this.deleteLanguage(id).then(r => this.getLanguages()))
+            this.alert().then(r => this.deleteLanguage(id))
         },
         /*
          * Action
          * */
         action(item, type) {
             let action = item.action[type] ? 0 : 1;
-            this.actionLanguage({id: item.id, type, action}).then(r => this.getLanguages())
+            this.actionLanguage({id: item.id, type, action})
         },
         /*
          * Save
@@ -151,7 +151,6 @@ export default {
             .then(r => {
                 if (r) {
                     this.modal(this.modalId);
-                    this.getLanguages();
                 }
             })
         }

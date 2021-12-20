@@ -271,11 +271,6 @@ export default {
             candidate: {}
         }
     },
-    watch: {
-        $route() {
-            this.getById();
-        }
-    },
     computed: {
         componentType() {
             return 'candidate-profile';

@@ -7,7 +7,8 @@ const CandidateStore = {
     /* State */
     state: {
         candidate: {},
-        candidates: []
+        candidates: [],
+        selectCandidates: [],
     },
 
     /* Mutation */
@@ -23,6 +24,12 @@ const CandidateStore = {
          * */
         SET_LIST(state, payload) {
             state.candidates = payload;
+        },
+        /*
+         * SET SELECT
+         * */
+        SET_SELECT(state, payload) {
+            state.selectCandidates = payload;
         }
     },
 
@@ -63,28 +70,43 @@ const CandidateStore = {
         getSelectCandidates({commit}, payload = {}) {
             return candidateService.get(null, payload)
             .then(r => {
-                commit('SET_LIST', r.data.response);
+                commit('SET_SELECT', r.data.response);
             })
         },
         /*
          * Set Candidate
          * */
-        setCandidate({commit}, payload) {
-            if (payload.id)
-                return candidateService.put(payload.id, payload);
-            return candidateService.post(null, payload);
+        setCandidate({commit, dispatch}, payload) {
+            let result;
+            if (payload.id) result = candidateService.put(payload.id, payload);
+            else result = candidateService.post(null, payload);
+            return result.then(r => {
+                dispatch('getCandidates');
+                dispatch('getSelectCandidates');
+                return r.data.response;
+            })
         },
         /*
          * Action Candidate
          * */
-        actionCandidate({commit}, payload) {
-            return candidateService.post('action', payload);
+        actionCandidate({commit, dispatch}, payload) {
+            return candidateService.post('action', payload)
+            .then(r => {
+                dispatch('getCandidates');
+                dispatch('getSelectCandidates');
+                return r.data.response;
+            })
         },
         /*
          * Delete Candidate
          * */
-        deleteCandidate({commit}, payload) {
-            return candidateService.delete(payload);
+        deleteCandidate({commit, dispatch}, payload) {
+            return candidateService.delete(payload)
+            .then(r => {
+                dispatch('getCandidates');
+                dispatch('getSelectCandidates');
+                return r.data.response;
+            })
         },
         /*
          * Send Candidate Email

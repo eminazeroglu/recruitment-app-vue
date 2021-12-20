@@ -134,14 +134,14 @@ export default {
          * Remove
          * */
         remove(id) {
-            this.alert().then(r => this.deleteFamilyStatus(id).then(r => this.getFamilyStatuses()))
+            this.alert().then(r => this.deleteFamilyStatus(id))
         },
         /*
          * Action
          * */
         action(item, type) {
             let action = item.action[type] ? 0 : 1;
-            this.actionFamilyStatus({id: item.id, type, action}).then(r => this.getFamilyStatuses())
+            this.actionFamilyStatus({id: item.id, type, action})
         },
         /*
          * Save
@@ -151,7 +151,6 @@ export default {
             .then(r => {
                 if (r) {
                     this.modal(this.modalId);
-                    this.getFamilyStatuses();
                 }
             })
         }

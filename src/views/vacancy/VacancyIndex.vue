@@ -87,7 +87,7 @@
                 <form @submit.prevent="changeStatus">
                     <grid>
                         <form-group :label="translateKey + '.Label.Status'">
-                            <form-tree-select :clearable="false" :options="vacancyPublishStatuses" v-model="changeStatusForm.status_id"/>
+                            <form-tree-select :clearable="false" :options="select_vacancyPublishStatuses" v-model="changeStatusForm.status_id"/>
                         </form-group>
 
                         <app-button property="success" class="justify-center">
@@ -108,7 +108,7 @@
                 <form @submit.prevent="changeRecruit">
                     <grid>
                         <form-group :label="translateKey + '.Label.Hr'">
-                            <form-tree-select :clearable="false" displayExpr="fullname" :options="users" v-model="changeRecruitForm.user_id"/>
+                            <form-tree-select :clearable="false" displayExpr="fullname" :options="select_recruiters" v-model="changeRecruitForm.user_id"/>
                         </form-group>
 
                         <app-button property="success" class="justify-center">
@@ -137,11 +137,11 @@
                         </form-group>
 
                         <form-group :label="translateKey + '.Label.Hr'">
-                            <form-tree-select displayExpr="fullname" :options="users" v-model="filterQuery.user_id"/>
+                            <form-tree-select displayExpr="fullname" :options="select_recruiters" v-model="filterQuery.user_id"/>
                         </form-group>
 
                         <form-group :label="translateKey + '.Label.City'">
-                            <form-tree-select :options="cities" v-model="filterQuery.city_id"/>
+                            <form-tree-select :options="select_cities" v-model="filterQuery.city_id"/>
                         </form-group>
 
                         <form-group :label="translateKey + '.Label.Profession'">
@@ -258,9 +258,9 @@ export default {
     },
     computed: {
         ...mapState('VacancyStore', ['vacancies']),
-        ...mapState('VacancyPublishStatusStore', ['vacancyPublishStatuses']),
-        ...mapState('UserStore', ['users']),
-        ...mapState('CityStore', ['cities']),
+        ...mapState('VacancyPublishStatusStore', ['select_vacancyPublishStatuses']),
+        ...mapState('UserStore', ['select_recruiters']),
+        ...mapState('CityStore', ['select_cities']),
         ...mapState('ProfessionStore', ['listProfessions']),
         permission() {
             return this.currentPage.permission;
@@ -269,7 +269,7 @@ export default {
     methods: {
         ...mapActions('VacancyStore', ['getVacancies', 'changeStatusVacancy', 'changeRecruitVacancy']),
         ...mapActions('VacancyPublishStatusStore', ['getSelectVacancyPublishStatuses']),
-        ...mapActions('UserStore', ['getSelectUsers']),
+        ...mapActions('UserStore', ['getSelectRecruiters']),
         ...mapActions('CityStore', ['getSelectCities']),
         ...mapActions('ProfessionStore', ['getSelectProfessions']),
         /*
@@ -290,14 +290,13 @@ export default {
             delete this.changeStatusForm.title;
             this.changeStatusVacancy(this.changeStatusForm);
             this.modal('VacancyChangeStatusPopup');
-            this.getVacancies();
         },
         /*
          * Change Recruit Popup
          * */
         changeRecruitPopup(item) {
             this.modal('VacancyChangeRecruitPopup');
-            this.getSelectUsers({type: 'hr'});
+            this.getSelectRecruiters();
             this.changeRecruitForm = changeRecruitForm();
             this.changeRecruitForm.title = item.name;
             this.changeRecruitForm.id = item.id;
@@ -310,7 +309,6 @@ export default {
             delete this.changeRecruitForm.title;
             this.changeRecruitVacancy(this.changeRecruitForm);
             this.modal('VacancyChangeRecruitPopup');
-            this.getVacancies();
         },
         /*
          * Filter Modal

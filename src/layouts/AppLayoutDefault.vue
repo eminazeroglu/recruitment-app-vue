@@ -3,8 +3,7 @@
         <AppSidebar/>
         <div class="layout-content">
             <AppHeader/>
-            <RouteTab/>
-            <div class="pb-20 pt-5 px-6 h-full overflow-y-auto">
+            <div class="h-full">
                 <slot/>
             </div>
         </div>
@@ -18,11 +17,10 @@
 
 import AppHeader from "../common/components/header/AppHeader";
 import AppSidebar from "../common/components/sidebar/AppSidebar";
-import RouteTab from "../common/components/route-tab/RouteTab";
 
 export default {
     name: "AppLayoutDefault",
-    components: {RouteTab, AppSidebar, AppHeader},
+    components: {AppSidebar, AppHeader},
     data() {
         return {}
     }

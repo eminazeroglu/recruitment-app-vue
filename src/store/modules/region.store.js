@@ -7,7 +7,8 @@ const RegionStore = {
     /* State */
     state: {
         region: {},
-        regions: []
+        regions: [],
+        select_regions: [],
     },
 
     /* Mutation */
@@ -23,6 +24,12 @@ const RegionStore = {
          * */
         SET_LIST(state, payload) {
             state.regions = payload;
+        },
+        /*
+         * SET SELECT
+         * */
+        SET_SELECT(state, payload) {
+            state.select_regions = payload;
         }
     },
 
@@ -61,7 +68,7 @@ const RegionStore = {
         getSelectRegions({commit}, payload = {}) {
             return regionService.get(null, payload)
             .then(r => {
-                commit('SET_LIST', r.data.response);
+                commit('SET_SELECT', r.data.response);
             })
         },
         /*
@@ -72,17 +79,37 @@ const RegionStore = {
                 return regionService.put(payload.id, payload);
             return regionService.post(null, payload);
         },
+        setRegion({commit, dispatch}, payload) {
+            let result;
+            if (payload.id) result = regionService.put(payload.id, payload);
+            else result = regionService.post(null, payload);
+            return result.then(r => {
+                dispatch('getRegions');
+                dispatch('getSelectRegions');
+                return r.data.response;
+            })
+        },
         /*
          * Action Region
          * */
-        actionRegion({commit}, payload) {
-            return regionService.post('action', payload);
+        actionRegion({commit, dispatch}, payload) {
+            return regionService.post('action', payload)
+            .then(r => {
+                dispatch('getRegions');
+                dispatch('getSelectRegions');
+                return r.data.response;
+            })
         },
         /*
          * Delete Region
          * */
-        deleteRegion({commit}, payload) {
-            return regionService.delete(payload);
+        deleteRegion({commit, dispatch}, payload) {
+            return regionService.delete(payload)
+            .then(r => {
+                dispatch('getRegions');
+                dispatch('getSelectRegions');
+                return r.data.response;
+            })
         }
     },
 

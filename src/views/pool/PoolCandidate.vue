@@ -29,11 +29,6 @@ export default {
             return {id: this.pool.id};
         }
     },
-    watch: {
-        $route() {
-            this.getById();
-        }
-    },
     methods: {
         ...mapActions('PoolStore', ['getPoolCandidates', 'getPool']),
         getById() {

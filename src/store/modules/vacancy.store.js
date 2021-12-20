@@ -9,6 +9,7 @@ const VacancyStore = {
         vacancyFilters: {},
         vacancy: {},
         vacancies: [],
+        select_vacancies: [],
         vacancyCandidates: [],
     },
 
@@ -25,6 +26,12 @@ const VacancyStore = {
          * */
         SET_LIST(state, payload) {
             state.vacancies = payload;
+        },
+        /*
+         * SET SELECT
+         * */
+        SET_SELECT(state, payload) {
+            state.select_vacancies = payload;
         },
         /*
          * SET LIST CANDIDATE
@@ -45,7 +52,7 @@ const VacancyStore = {
         /*
          * Get Vacancies
          * */
-        getVacancies({commit}, payload = null) {
+        getVacancies({commit}, payload = {}) {
             const data = new CustomStore({
                 load: function (loadOptions) {
                     return vacancyService.get(null, {datatable: true, ...loadOptions, ...payload})
@@ -98,7 +105,7 @@ const VacancyStore = {
         getSelectVacancies({commit}, payload = {}) {
             return vacancyService.get(null, payload)
             .then(r => {
-                commit('SET_LIST', r.data.response);
+                commit('SET_SELECT', r.data.response);
             })
         },
         /*
@@ -113,28 +120,48 @@ const VacancyStore = {
         /*
          * Set Vacancy
          * */
-        setVacancy({commit}, payload) {
-            if (payload.id)
-                return vacancyService.put(payload.id, payload);
-            return vacancyService.post(null, payload);
+        setVacancy({commit, dispatch}, payload) {
+            let result;
+            if (payload.id) result = vacancyService.put(payload.id, payload);
+            else result = vacancyService.post(null, payload);
+            return result.then(r => {
+                dispatch('getVacancies');
+                dispatch('getSelectVacancies');
+                return r.data.response;
+            })
         },
         /*
          * Change Status Vacancy
          * */
-        changeStatusVacancy({commit}, payload) {
-            return vacancyService.post('change-status', payload);
+        changeStatusVacancy({commit, dispatch}, payload) {
+            return vacancyService.post('change-status', payload)
+            .then(r => {
+                dispatch('getVacancies');
+                dispatch('getSelectVacancies');
+                return r.data.response;
+            })
         },
         /*
          * Change Recruit Vacancy
          * */
-        changeRecruitVacancy({commit}, payload) {
-            return vacancyService.post('change-recruit', payload);
+        changeRecruitVacancy({commit, dispatch}, payload) {
+            return vacancyService.post('change-recruit', payload)
+            .then(r => {
+                dispatch('getVacancies');
+                dispatch('getSelectVacancies');
+                return r.data.response;
+            })
         },
         /*
          * Delete Vacancy
          * */
         deleteVacancy({commit}, payload) {
-            return vacancyService.delete(payload);
+            return vacancyService.delete(payload)
+            .then(r => {
+                dispatch('getVacancies');
+                dispatch('getSelectVacancies');
+                return r.data.response;
+            })
         },
         /*
         * Set Apply Candidate Compatibility

@@ -1,5 +1,6 @@
 import CustomStore from "devextreme/data/custom_store";
 import poolService from "../../services/pool.service";
+import languageService from "../../services/language.service";
 
 const PoolStore = {
     namespaced: true,
@@ -103,22 +104,37 @@ const PoolStore = {
         /*
          * Set Pool
          * */
-        setPool({commit}, payload) {
-            if (payload.id)
-                return poolService.put(payload.id, payload);
-            return poolService.post(null, payload);
+        setPool({commit, dispatch}, payload) {
+            let result;
+            if (payload.id) result = poolService.put(payload.id, payload);
+            else result = poolService.post(null, payload);
+            return result.then(r => {
+                dispatch('getPools');
+                dispatch('getSelectPools');
+                return r.data.response;
+            })
         },
         /*
          * Action Pool
          * */
-        actionPool({commit}, payload) {
-            return poolService.post('action', payload);
+        actionPool({commit, dispatch}, payload) {
+            return poolService.post('action', payload)
+            .then(r => {
+                dispatch('getPools');
+                dispatch('getSelectPools');
+                return r.data.response;
+            })
         },
         /*
          * Delete Pool
          * */
-        deletePool({commit}, payload) {
-            return poolService.delete(payload);
+        deletePool({commit, dispatch}, payload) {
+            return poolService.delete(payload)
+            .then(r => {
+                dispatch('getPools');
+                dispatch('getSelectPools');
+                return r.data.response;
+            })
         },
     },
 

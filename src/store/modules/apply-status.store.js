@@ -1,5 +1,6 @@
 import CustomStore from "devextreme/data/custom_store";
 import applyStatusService from "../../services/applyStatus.service";
+import professionService from "../../services/profession.service";
 
 const ApplyStatusStore = {
     namespaced: true,
@@ -7,7 +8,8 @@ const ApplyStatusStore = {
     /* State */
     state: {
         applyStatus: {},
-        applyStatuses: []
+        applyStatuses: [],
+        applySelectStatuses: [],
     },
 
     /* Mutation */
@@ -23,6 +25,12 @@ const ApplyStatusStore = {
          * */
         SET_LIST(state, payload) {
             state.applyStatuses = payload;
+        },
+        /*
+         * SET_SELECT
+         * */
+        SET_SELECT(state, payload) {
+            state.applySelectStatuses = payload;
         }
     },
 
@@ -61,28 +69,43 @@ const ApplyStatusStore = {
         getSelectApplyStatuses({commit}, payload = {}) {
             return applyStatusService.get(null, payload)
             .then(r => {
-                commit('SET_LIST', r.data.response);
+                commit('SET_SELECT', r.data.response);
             })
         },
         /*
          * Set ApplyStatus
          * */
-        setApplyStatus({commit}, payload) {
-            if (payload.id)
-                return applyStatusService.put(payload.id, payload);
-            return applyStatusService.post(null, payload);
+        setApplyStatus({commit, dispatch}, payload) {
+            let result;
+            if (payload.id) result = applyStatusService.put(payload.id, payload);
+            else result = applyStatusService.post(null, payload);
+            return result.then(r => {
+                dispatch('getApplyStatuses');
+                dispatch('getSelectApplyStatuses');
+                return r.data.response;
+            })
         },
         /*
          * Action ApplyStatus
          * */
-        actionApplyStatus({commit}, payload) {
-            return applyStatusService.post('action', payload);
+        actionApplyStatus({commit, dispatch}, payload) {
+            return applyStatusService.post('action', payload)
+            .then(r => {
+                dispatch('getApplyStatuses');
+                dispatch('getSelectApplyStatuses');
+                return r.data.response;
+            })
         },
         /*
          * Delete ApplyStatus
          * */
-        deleteApplyStatus({commit}, payload) {
-            return applyStatusService.delete(payload);
+        deleteApplyStatus({commit, dispatch}, payload) {
+            return applyStatusService.delete(payload)
+            .then(r => {
+                dispatch('getApplyStatuses');
+                dispatch('getSelectApplyStatuses');
+                return r.data.response;
+            })
         }
     },
 

@@ -1,5 +1,6 @@
 import CustomStore from "devextreme/data/custom_store";
 import vacancyCompatibilityService from "../../services/vacancyCompatibility.service";
+import vacancyService from "../../services/vacancy.service";
 
 const VacancyCompatibilityStore = {
     namespaced: true,
@@ -7,7 +8,8 @@ const VacancyCompatibilityStore = {
     /* State */
     state: {
         vacancyCompatibility: {},
-        vacancyCompatibilities: []
+        vacancyCompatibilities: [],
+        select_vacancyCompatibilities: [],
     },
 
     /* Mutation */
@@ -23,6 +25,12 @@ const VacancyCompatibilityStore = {
          * */
         SET_LIST(state, payload) {
             state.vacancyCompatibilities = payload;
+        },
+        /*
+         * SET SELECT
+         * */
+        SET_SELECT(state, payload) {
+            state.select_vacancyCompatibilities = payload;
         }
     },
 
@@ -61,28 +69,43 @@ const VacancyCompatibilityStore = {
         getSelectVacancyCompatibilities({commit}, payload = {}) {
             return vacancyCompatibilityService.get(null, payload)
             .then(r => {
-                commit('SET_LIST', r.data.response);
+                commit('SET_SELECT', r.data.response);
             })
         },
         /*
          * Set VacancyCompatibility
          * */
-        setVacancyCompatibility({commit}, payload) {
-            if (payload.id)
-                return vacancyCompatibilityService.put(payload.id, payload);
-            return vacancyCompatibilityService.post(null, payload);
+        setVacancyCompatibility({commit, dispatch}, payload) {
+            let result;
+            if (payload.id) result = vacancyCompatibilityService.put(payload.id, payload);
+            else result = vacancyCompatibilityService.post(null, payload);
+            return result.then(r => {
+                dispatch('getVacancyCompatibilities');
+                dispatch('getSelectVacancyCompatibilities');
+                return r.data.response;
+            })
         },
         /*
          * Action VacancyCompatibility
          * */
-        actionVacancyCompatibility({commit}, payload) {
-            return vacancyCompatibilityService.post('action', payload);
+        actionVacancyCompatibility({commit, dispatch}, payload) {
+            return vacancyCompatibilityService.post('action', payload)
+            .then(r => {
+                dispatch('getVacancyCompatibilities');
+                dispatch('getSelectVacancyCompatibilities');
+                return r.data.response;
+            })
         },
         /*
          * Delete VacancyCompatibility
          * */
-        deleteVacancyCompatibility({commit}, payload) {
-            return vacancyCompatibilityService.delete(payload);
+        deleteVacancyCompatibility({commit, dispatch}, payload) {
+            return vacancyCompatibilityService.delete(payload)
+            .then(r => {
+                dispatch('getVacancyCompatibilities');
+                dispatch('getSelectVacancyCompatibilities');
+                return r.data.response;
+            })
         }
     },
 

@@ -7,7 +7,8 @@ const UniversityStore = {
     /* State */
     state: {
         university: {},
-        universities: []
+        universities: [],
+        select_universities: [],
     },
 
     /* Mutation */
@@ -23,6 +24,12 @@ const UniversityStore = {
          * */
         SET_LIST(state, payload) {
             state.universities = payload;
+        },
+        /*
+         * SET SELECT
+         * */
+        SET_SELECT(state, payload) {
+            state.select_universities = payload;
         }
     },
 
@@ -61,28 +68,43 @@ const UniversityStore = {
         getSelectUniversities({commit}, payload = {}) {
             return universityService.get(null, payload)
             .then(r => {
-                commit('SET_LIST', r.data.response);
+                commit('SET_SELECT', r.data.response);
             })
         },
         /*
          * Set University
          * */
-        setUniversity({commit}, payload) {
-            if (payload.id)
-                return universityService.put(payload.id, payload);
-            return universityService.post(null, payload);
+        setUniversity({commit, dispatch}, payload) {
+            let result;
+            if (payload.id) result = universityService.put(payload.id, payload);
+            else result = universityService.post(null, payload);
+            return result.then(r => {
+                dispatch('getUniversities');
+                dispatch('getSelectUniversities');
+                return r.data.response;
+            })
         },
         /*
          * Action University
          * */
-        actionUniversity({commit}, payload) {
-            return universityService.post('action', payload);
+        actionUniversity({commit, dispatch}, payload) {
+            return universityService.post('action', payload)
+            .then(r => {
+                dispatch('getUniversities');
+                dispatch('getSelectUniversities');
+                return r.data.response;
+            })
         },
         /*
          * Delete University
          * */
-        deleteUniversity({commit}, payload) {
-            return universityService.delete(payload);
+        deleteUniversity({commit, dispatch}, payload) {
+            return universityService.delete(payload)
+            .then(r => {
+                dispatch('getUniversities');
+                dispatch('getSelectUniversities');
+                return r.data.response;
+            })
         }
     },
 

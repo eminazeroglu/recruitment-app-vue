@@ -7,7 +7,8 @@ const SkillStore = {
     /* State */
     state: {
         skill: {},
-        skills: []
+        skills: [],
+        select_skills: [],
     },
 
     /* Mutation */
@@ -23,6 +24,12 @@ const SkillStore = {
          * */
         SET_LIST(state, payload) {
             state.skills = payload;
+        },
+        /*
+         * SET SELECT
+         * */
+        SET_SELECT(state, payload) {
+            state.select_skills = payload;
         }
     },
 
@@ -61,28 +68,43 @@ const SkillStore = {
         getSelectSkills({commit}, payload = {}) {
             return skillService.get(null, payload)
             .then(r => {
-                commit('SET_LIST', r.data.response);
+                commit('SET_SELECT', r.data.response);
             })
         },
         /*
          * Set Skill
          * */
-        setSkill({commit}, payload) {
-            if (payload.id)
-                return skillService.put(payload.id, payload);
-            return skillService.post(null, payload);
+        setSkill({commit, dispatch}, payload) {
+            let result;
+            if (payload.id) result = skillService.put(payload.id, payload);
+            else result = skillService.post(null, payload);
+            return result.then(r => {
+                dispatch('getSkills');
+                dispatch('getSelectSkills');
+                return r.data.response;
+            })
         },
         /*
          * Action Skill
          * */
-        actionSkill({commit}, payload) {
-            return skillService.post('action', payload);
+        actionSkill({commit, dispatch}, payload) {
+            return skillService.post('action', payload)
+            .then(r => {
+                dispatch('getSkills');
+                dispatch('getSelectSkills');
+                return r.data.response;
+            })
         },
         /*
          * Delete Skill
          * */
-        deleteSkill({commit}, payload) {
-            return skillService.delete(payload);
+        deleteSkill({commit, dispatch}, payload) {
+            return skillService.delete(payload)
+            .then(r => {
+                dispatch('getSkills');
+                dispatch('getSelectSkills');
+                return r.data.response;
+            })
         }
     },
 

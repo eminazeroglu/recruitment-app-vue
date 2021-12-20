@@ -65,7 +65,7 @@
                             :label="translate(translateKey + '.Label.City')"
                             name="city_id"
                         >
-                            <form-tree-select :options="cities" v-model="form.city_id"/>
+                            <form-tree-select :options="select_cities" v-model="form.city_id"/>
                         </form-group>
 
                         <app-button class="justify-center" property="success" type="submit">
@@ -112,7 +112,7 @@ export default {
     },
     computed: {
         ...mapState('RegionStore', ['regions']),
-        ...mapState('CityStore', ['cities']),
+        ...mapState('CityStore', ['select_cities']),
         permission() {
             return this.currentPage.permission;
         }
@@ -151,14 +151,14 @@ export default {
          * Remove
          * */
         remove(id) {
-            this.alert().then(r => this.deleteRegion(id).then(r => this.getRegions()))
+            this.alert().then(r => this.deleteRegion(id))
         },
         /*
          * Action
          * */
         action(item, type) {
             let action = item.action[type] ? 0 : 1;
-            this.actionRegion({id: item.id, type, action}).then(r => this.getRegions())
+            this.actionRegion({id: item.id, type, action})
         },
         /*
          * Save
@@ -168,7 +168,6 @@ export default {
             .then(r => {
                 if (r) {
                     this.modal(this.modalId);
-                    this.getRegions();
                 }
             })
         }

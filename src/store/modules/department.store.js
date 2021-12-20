@@ -7,7 +7,8 @@ const DepartmentStore = {
     /* State */
     state: {
         department: {},
-        departments: []
+        departments: [],
+        select_departments: [],
     },
 
     /* Mutation */
@@ -23,6 +24,12 @@ const DepartmentStore = {
          * */
         SET_LIST(state, payload) {
             state.departments = payload;
+        },
+        /*
+         * SET SELECT
+         * */
+        SET_SELECT(state, payload) {
+            state.select_departments = payload;
         }
     },
 
@@ -61,28 +68,43 @@ const DepartmentStore = {
         getSelectDepartments({commit}, payload = {}) {
             return departmentService.get(null, payload)
             .then(r => {
-                commit('SET_LIST', r.data.response);
+                commit('SET_SELECT', r.data.response);
             })
         },
         /*
          * Set Department
          * */
-        setDepartment({commit}, payload) {
-            if (payload.id)
-                return departmentService.put(payload.id, payload);
-            return departmentService.post(null, payload);
+        setDepartment({commit, dispatch}, payload) {
+            let result;
+            if (payload.id) result = departmentService.put(payload.id, payload);
+            else result = departmentService.post(null, payload);
+            return result.then(r => {
+                dispatch('getDepartments');
+                dispatch('getSelectDepartments');
+                return r.data.response;
+            })
         },
         /*
          * Action Department
          * */
-        actionDepartment({commit}, payload) {
-            return departmentService.post('action', payload);
+        actionDepartment({commit, dispatch}, payload) {
+            return departmentService.post('action', payload)
+            .then(r => {
+                dispatch('getDepartments');
+                dispatch('getSelectDepartments');
+                return r.data.response;
+            })
         },
         /*
          * Delete Department
          * */
-        deleteDepartment({commit}, payload) {
-            return departmentService.delete(payload);
+        deleteDepartment({commit, dispatch}, payload) {
+            return departmentService.delete(payload)
+            .then(r => {
+                dispatch('getDepartments');
+                dispatch('getSelectDepartments');
+                return r.data.response;
+            })
         }
     },
 

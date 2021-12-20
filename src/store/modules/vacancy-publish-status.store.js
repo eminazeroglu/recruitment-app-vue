@@ -1,5 +1,6 @@
 import CustomStore from "devextreme/data/custom_store";
 import vacancyPublishStatusService from "../../services/vacancyPublishStatus.service";
+import vacancyCompatibilityService from "../../services/vacancyCompatibility.service";
 
 const VacancyPublishStatusStore = {
     namespaced: true,
@@ -7,7 +8,8 @@ const VacancyPublishStatusStore = {
     /* State */
     state: {
         vacancyPublishStatus: {},
-        vacancyPublishStatuses: []
+        vacancyPublishStatuses: [],
+        select_vacancyPublishStatuses: [],
     },
 
     /* Mutation */
@@ -23,6 +25,12 @@ const VacancyPublishStatusStore = {
          * */
         SET_LIST(state, payload) {
             state.vacancyPublishStatuses = payload;
+        },
+        /*
+         * SET SELECT
+         * */
+        SET_SELECT(state, payload) {
+            state.select_vacancyPublishStatuses = payload;
         }
     },
 
@@ -61,28 +69,43 @@ const VacancyPublishStatusStore = {
         getSelectVacancyPublishStatuses({commit}, payload = {}) {
             return vacancyPublishStatusService.get(null, payload)
             .then(r => {
-                commit('SET_LIST', r.data.response);
+                commit('SET_SELECT', r.data.response);
             })
         },
         /*
          * Set VacancyPublishStatus
          * */
-        setVacancyPublishStatus({commit}, payload) {
-            if (payload.id)
-                return vacancyPublishStatusService.put(payload.id, payload);
-            return vacancyPublishStatusService.post(null, payload);
+        setVacancyPublishStatus({commit, dispatch}, payload) {
+            let result;
+            if (payload.id) result = vacancyPublishStatusService.put(payload.id, payload);
+            else result = vacancyPublishStatusService.post(null, payload);
+            return result.then(r => {
+                dispatch('getVacancyPublishStatuses');
+                dispatch('getSelectVacancyPublishStatuses');
+                return r.data.response;
+            })
         },
         /*
          * Action VacancyPublishStatus
          * */
-        actionVacancyPublishStatus({commit}, payload) {
-            return vacancyPublishStatusService.post('action', payload);
+        actionVacancyPublishStatus({commit, dispatch}, payload) {
+            return vacancyPublishStatusService.post('action', payload)
+            .then(r => {
+                dispatch('getVacancyPublishStatuses');
+                dispatch('getSelectVacancyPublishStatuses');
+                return r.data.response;
+            })
         },
         /*
          * Delete VacancyPublishStatus
          * */
-        deleteVacancyPublishStatus({commit}, payload) {
-            return vacancyPublishStatusService.delete(payload);
+        deleteVacancyPublishStatus({commit, dispatch}, payload) {
+            return vacancyPublishStatusService.delete(payload)
+            .then(r => {
+                dispatch('getVacancyPublishStatuses');
+                dispatch('getSelectVacancyPublishStatuses');
+                return r.data.response;
+            })
         }
     },
 

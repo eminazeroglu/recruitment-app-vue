@@ -134,14 +134,14 @@ export default {
          * Remove
          * */
         remove(id) {
-            this.alert().then(r => this.deleteVacancyPublishStatus(id).then(r => this.getVacancyPublishStatuses()))
+            this.alert().then(r => this.deleteVacancyPublishStatus(id))
         },
         /*
          * Action
          * */
         action(item, type) {
             let action = item.action[type] ? 0 : 1;
-            this.actionVacancyPublishStatus({id: item.id, type, action}).then(r => this.getVacancyPublishStatuses())
+            this.actionVacancyPublishStatus({id: item.id, type, action})
         },
         /*
          * Save
@@ -151,7 +151,6 @@ export default {
             .then(r => {
                 if (r) {
                     this.modal(this.modalId);
-                    this.getVacancyPublishStatuses();
                 }
             })
         }

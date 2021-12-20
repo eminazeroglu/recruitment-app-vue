@@ -7,7 +7,8 @@ const CityStore = {
     /* State */
     state: {
         city: {},
-        cities: []
+        select_cities: [],
+        cities: [],
     },
 
     /* Mutation */
@@ -23,6 +24,12 @@ const CityStore = {
          * */
         SET_LIST(state, payload) {
             state.cities = payload;
+        },
+        /*
+         * SET SELECT
+         * */
+        SET_SELECT(state, payload) {
+            state.select_cities = payload;
         }
     },
 
@@ -61,28 +68,43 @@ const CityStore = {
         getSelectCities({commit}, payload = {}) {
             return cityService.get(null, payload)
             .then(r => {
-                commit('SET_LIST', r.data.response);
+                commit('SET_SELECT', r.data.response);
             })
         },
         /*
          * Set City
          * */
-        setCity({commit}, payload) {
-            if (payload.id)
-                return cityService.put(payload.id, payload);
-            return cityService.post(null, payload);
+        setCity({commit, dispatch}, payload) {
+            let result;
+            if (payload.id) result = cityService.put(payload.id, payload);
+            else result = cityService.post(null, payload);
+            return result.then(r => {
+                dispatch('getCities');
+                dispatch('getSelectCities');
+                return r.data.response;
+            })
         },
         /*
          * Action City
          * */
-        actionCity({commit}, payload) {
-            return cityService.post('action', payload);
+        actionCity({commit, dispatch}, payload) {
+            return cityService.post('action', payload)
+            .then(r => {
+                dispatch('getCities');
+                dispatch('getSelectCities');
+                return r.data.response;
+            })
         },
         /*
          * Delete City
          * */
-        deleteCity({commit}, payload) {
-            return cityService.delete(payload);
+        deleteCity({commit, dispatch}, payload) {
+            return cityService.delete(payload)
+            .then(r => {
+                dispatch('getCities');
+                dispatch('getSelectCities');
+                return r.data.response;
+            })
         }
     },
 

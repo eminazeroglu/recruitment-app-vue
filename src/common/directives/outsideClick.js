@@ -1,6 +1,6 @@
 export default {
     install(Vue, options = null) {
-        Vue.directive('phone', {
+        Vue.directive('outside', {
             bind: function (el, binding, vnode) {
                 el.clickOutsideEvent = function (event) {
                     if (!(el === event.target || el.contains (event.target))) {

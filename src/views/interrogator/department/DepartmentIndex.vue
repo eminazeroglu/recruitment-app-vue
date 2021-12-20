@@ -155,14 +155,14 @@ export default {
          * Remove
          * */
         remove(id) {
-            this.alert().then(r => this.deleteDepartment(id).then(r => this.getDepartments()))
+            this.alert().then(r => this.deleteDepartment(id))
         },
         /*
          * Action
          * */
         action(item, type) {
             let action = item.action[type] ? 0 : 1;
-            this.actionDepartment({id: item.id, type, action}).then(r => this.getDepartments())
+            this.actionDepartment({id: item.id, type, action})
         },
         /*
          * Save
@@ -172,7 +172,6 @@ export default {
             .then(r => {
                 if (r) {
                     this.modal(this.modalId);
-                    this.getDepartments();
                 }
             })
         }

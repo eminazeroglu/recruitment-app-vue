@@ -134,14 +134,14 @@ export default {
          * Remove
          * */
         remove(id) {
-            this.alert().then(r => this.deleteEducationDegree(id).then(r => this.getEducationDegrees()))
+            this.alert().then(r => this.deleteEducationDegree(id))
         },
         /*
          * Action
          * */
         action(item, type) {
             let action = item.action[type] ? 0 : 1;
-            this.actionEducationDegree({id: item.id, type, action}).then(r => this.getEducationDegrees())
+            this.actionEducationDegree({id: item.id, type, action})
         },
         /*
          * Save
@@ -151,7 +151,6 @@ export default {
             .then(r => {
                 if (r) {
                     this.modal(this.modalId);
-                    this.getEducationDegrees();
                 }
             })
         }

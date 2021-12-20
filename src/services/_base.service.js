@@ -14,46 +14,22 @@ class baseService {
         return url
     }
 
-    handleErrors(err) {
-        console.log({message: "Errors is handled here", err});
-    }
-
     async get(param, query = {}) {
-        try {
-            return await api.get(this.#getUrl(param), {params: query});
-        }
-        catch (e) {
-            this.handleErrors(e.message)
-        }
+        return await api.get(this.#getUrl(param), {params: query});
     }
 
     async post(param = null, data = {}, query = {}) {
-        try {
-            return await api.post(this.#getUrl(param), data, {
-                params: query
-            });
-        }
-        catch (e) {
-            this.handleErrors(e.message)
-        }
+        return await api.post(this.#getUrl(param), data, {
+            params: query
+        });
     }
 
     async put(param, data = {}) {
-        try {
-            return await api.put(this.#getUrl(param), data);
-        }
-        catch (e) {
-            this.handleErrors(e.message)
-        }
+        return await api.put(this.#getUrl(param), data);
     }
 
     async delete(param) {
-        try {
-            return await api.delete(this.#getUrl(param));
-        }
-        catch (e) {
-            this.handleErrors(e.message)
-        }
+        return await api.delete(this.#getUrl(param));
     }
 
 }
