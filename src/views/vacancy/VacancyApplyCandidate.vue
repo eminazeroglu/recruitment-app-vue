@@ -66,7 +66,7 @@
                 <form @submit.prevent="changeCompatibility">
                     <grid>
                         <form-group :label="translateKey + '.Label.VacancyCompatibility'" name="vacancy_compatibility_id">
-                            <form-tree-select :clearable="false" :options="vacancyCompatibilities" v-model="changeCompatibilityForm.vacancy_compatibility_id"/>
+                            <form-tree-select :clearable="false" :options="select_vacancyCompatibilities" v-model="changeCompatibilityForm.vacancy_compatibility_id"/>
                         </form-group>
 
                         <app-button property="success" class="justify-center" type="submit">
@@ -86,7 +86,7 @@
                 <form @submit.prevent="changeStatus">
                     <grid>
                         <form-group :label="translateKey + '.Label.Status'" name="apply_status_id">
-                            <form-tree-select :clearable="false" :options="applyStatuses" v-model="changeStatusForm.apply_status_id"/>
+                            <form-tree-select :clearable="false" :options="applySelectStatuses" v-model="changeStatusForm.apply_status_id"/>
                         </form-group>
 
                         <app-button property="success" class="justify-center" type="submit">
@@ -196,8 +196,8 @@ export default {
     },
     computed: {
         ...mapState('VacancyStore', ['vacancyCandidates', 'vacancy']),
-        ...mapState('VacancyCompatibilityStore', ['vacancyCompatibilities']),
-        ...mapState('ApplyStatusStore', ['applyStatuses']),
+        ...mapState('VacancyCompatibilityStore', ['select_vacancyCompatibilities']),
+        ...mapState('ApplyStatusStore', ['applySelectStatuses']),
         dxInstance() {
             return this.$refs.dataGrid.$refs.dataGrid.instance;
         },

@@ -194,8 +194,7 @@
     border: 1px solid #eaecef;
     background: #fff;
     box-shadow: 1px 1px 4px 0 rgb(0 0 0 / 10%);
-    transition: all .25s ease-in;
-    transform-origin: left top;
+    transition: opacity .25s ease-in;
     opacity: 0;
     visibility: hidden;
 }
